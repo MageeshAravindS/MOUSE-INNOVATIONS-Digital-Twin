@@ -117,18 +117,14 @@ function showSupabaseError(msg) {
 // ======================================
 
 window.googleLoginSupabase = async function () {
+    const redirectUrl = window.location.origin + window.location.pathname;
 
     const { error } =
         await supabase.auth.signInWithOAuth({
-
             provider: "google",
-
             options: {
-
-                redirectTo: window.location.origin
-
+                redirectTo: redirectUrl
             }
-
         });
 
     if (error) {
@@ -257,7 +253,6 @@ const {
 } = await supabase.auth.getSession();
 
 if (session?.user) {
-
     const cachedRaw =
         localStorage.getItem("edunexus_google_user");
 
@@ -265,19 +260,26 @@ if (session?.user) {
         cachedRaw ? JSON.parse(cachedRaw).email : null;
 
     if (cachedEmail !== session.user.email) {
-
         // Fresh login (or a different account) -- store it and do the
         // one-time reload that hands control to app.js's boot().
         await storeUserAndReload(session.user);
-
     } else {
-
         // Same user already cached (e.g. a normal page refresh) --
         // just keep the in-memory copy in sync, no reload.
         window.currentUser = JSON.parse(cachedRaw);
-
     }
 }
+
+// Also listen for real-time OAuth redirect callbacks (e.g. immediately after Google redirects back)
+supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    if ((event === "SIGNED_IN" || event === "USER_UPDATED") && currentSession?.user) {
+        const cachedRaw = localStorage.getItem("edunexus_google_user");
+        const cachedEmail = cachedRaw ? JSON.parse(cachedRaw).email : null;
+        if (cachedEmail !== currentSession.user.email) {
+            await storeUserAndReload(currentSession.user);
+        }
+    }
+});
 
 // ======================================
 // LOGOUT
