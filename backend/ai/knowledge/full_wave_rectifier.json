@@ -1,0 +1,336 @@
+{
+  "experiment": "Full Wave Rectifier (Centre-Tap)",
+  "description": "Full Wave (Centre-Tap) Rectifier Practical",
+  "_meta_note": "The six 'correct_groups' below (g1-g6) are the exact, ground-truth node groups supplied for this experiment: {1,5,10,11,26}, {2,3,7,14,25}, {6,12,13,17,19}, {4,8,9,18,22}, {15,31,32}, {16,30,33}. The 'group_metadata' component/purpose text below is a best-effort description of what each group likely represents on the trainer board (diode branches, centre-tap return paths, and output measurement points), inferred by analogy with the sibling Bridge Rectifier knowledge file on the same physical board layout. VERIFY the component_name / purpose / description text against your actual trainer manual before treating it as ground truth -- only the node numbers themselves are guaranteed correct.",
+  "aim": "To construct a full wave (centre-tap) rectifier circuit, observe the rectified DC output waveform on a CRO, and measure the DC output voltage across the load for a given centre-tapped AC input.",
+  "objective": [
+    "Understand the working of a full-wave rectifier using a centre-tapped transformer.",
+    "Verify how each half of the centre-tapped secondary, together with its diode, contributes one half-cycle of the rectified output.",
+    "Measure and calculate the DC output voltage, ripple, and compare with theoretical values.",
+    "Identify the effect of a missing or wrongly connected diode branch on the output waveform."
+  ],
+  "theory": "A full wave (centre-tap) rectifier converts an AC input into a pulsating DC output using two diodes and a centre-tapped transformer secondary, instead of the four diodes used in a bridge rectifier. During the positive half-cycle, the diode connected to the top half of the secondary conducts, while the diode connected to the bottom half stays reverse biased. During the negative half-cycle, the roles reverse. In both cases, current flows through the load in the same direction, producing a full-wave rectified output. The centre tap of the transformer forms the common return/reference point (effectively circuit ground / DC negative), while the diode cathodes are tied together to form the DC positive output rail. A filter capacitor placed across the output smooths this pulsating DC into a nearly steady DC voltage.",
+  "working_principle": "The centre-tapped secondary supplies two AC voltages of opposite phase relative to the centre tap. On the half-cycle where the top winding end is positive relative to the centre tap, the top diode is forward biased and conducts, sending current through the load and back to the centre tap. On the opposite half-cycle, the bottom winding end is positive relative to the centre tap, so the bottom diode conducts instead, again routing current through the load in the same direction. Because one of the two diodes is always conducting on alternating half-cycles, the load sees a full-wave rectified output. A missing or wrongly connected diode branch removes one of these two conduction paths, degrading the output to half-wave rectification with a missing lobe on the CRO.",
+  "apparatus": [
+    "Full Wave (Centre-Tap) Rectifier trainer kit / breadboard",
+    "Centre-tapped step-down transformer (e.g. 230V/(12-0-12)V or as specified)",
+    "2 x Silicon diodes (e.g., 1N4007)",
+    "Filter capacitor (e.g., 470uF - 1000uF, electrolytic)",
+    "Load resistor (decade resistance box or fixed value)",
+    "Digital Multimeter",
+    "Dual channel CRO / Oscilloscope with probes",
+    "Connecting wires / patch cords",
+    "AC supply (230V mains) with isolation transformer"
+  ],
+  "components": [
+    {
+      "name": "Centre-Tapped Transformer",
+      "role": "Steps down 230V AC mains to two equal, opposite-phase low AC voltages referenced to the centre tap."
+    },
+    {
+      "name": "Diode D1",
+      "role": "Forward biased during the half-cycle when the top secondary terminal is positive relative to the centre tap; conducts current through the load."
+    },
+    {
+      "name": "Diode D2",
+      "role": "Forward biased during the opposite half-cycle, when the bottom secondary terminal is positive relative to the centre tap."
+    },
+    {
+      "name": "Filter Capacitor",
+      "role": "Smooths the pulsating DC output by charging at the peaks and discharging through the load, reducing ripple."
+    },
+    {
+      "name": "Load Resistor (RL)",
+      "role": "Represents the load drawing DC current; used to measure output voltage and current."
+    },
+    {
+      "name": "Multimeter",
+      "role": "Measures the average/RMS DC output voltage across the load."
+    },
+    {
+      "name": "CRO",
+      "role": "Displays the rectified (and filtered) output waveform for visual verification of full-wave rectification and ripple."
+    }
+  ],
+  "procedure": [
+    "Switch off the AC supply before making any connections.",
+    "Connect the centre-tapped transformer secondary and centre tap to the input terminals of the rectifier (nodes forming groups g1-g4 as per the wiring table).",
+    "Connect both diodes D1 and D2, ensuring correct polarity (anode/cathode orientation).",
+    "Connect the load resistor across the DC output terminals.",
+    "Connect the filter capacitor across the load resistor, observing correct polarity for the electrolytic capacitor.",
+    "Connect the multimeter (in DC voltage mode) across the output terminals to measure Vdc (node group g5/g6).",
+    "Connect the CRO probe across the output terminals to observe the rectified output waveform.",
+    "Switch on the AC supply.",
+    "Note the DC output voltage on the multimeter.",
+    "Observe and sketch the rectified output waveform on the CRO, with and without the filter capacitor connected.",
+    "Switch off the supply, disconnect one diode branch at a time to observe the effect of a missing group on the waveform, then restore the correct connection.",
+    "Record all readings and compare with theoretical calculations.",
+    "Switch off the supply after completing all observations."
+  ],
+  "precautions": [
+    "Always switch off the AC mains supply before making or changing any connections.",
+    "Ensure diodes are connected with correct polarity; a reversed diode can short the supply or block rectification.",
+    "Observe correct polarity while connecting the electrolytic filter capacitor; reverse polarity can cause it to heat up or burst.",
+    "Do not exceed the rated voltage/current of the diodes, capacitor, or load resistor.",
+    "Use an isolation transformer and avoid direct contact with mains-side wiring.",
+    "Set the multimeter to the correct range (DC voltage) before measuring the output.",
+    "Double check all connections against the wiring/group table before switching on the supply.",
+    "Keep CRO probes properly grounded and set to the correct volts/division before observing waveforms."
+  ],
+  "expected_output": {
+    "waveform_without_filter": "Full-wave pulsating DC with two humps per input AC cycle, always positive (or always negative depending on output reference).",
+    "waveform_with_filter": "Nearly flat DC with a small ripple riding on top, ripple frequency = 2 x input AC frequency (100Hz for 50Hz mains)."
+  },
+  "expected_voltage": {
+    "formula_no_filter": "Vdc = (2 x Vm) / pi, where Vm is the peak secondary voltage (per half of the centre-tapped winding)",
+    "formula_with_filter": "Vdc ~= Vm - (Idc / (2 x f x C)), where f is the AC supply frequency and C is the filter capacitance",
+    "typical_value": "For a 12-0-12V centre-tapped secondary, expected unfiltered Vdc is approximately 10.8V (per half winding) and filtered Vdc is close to 16-17V (near peak) depending on load and capacitor size.",
+    "note": "Exact expected voltage depends on the transformer secondary voltage and load used in your specific trainer kit; recompute using the formulas above for your actual component values."
+  },
+  "expected_waveforms": [
+    "Input: Sinusoidal AC waveform across each half of the centre-tapped secondary.",
+    "Output (no capacitor): Full-wave rectified pulsating DC, both half-cycles rectified to the same polarity.",
+    "Output (with capacitor): Smoothed DC with visible ripple, ripple frequency = 2 x supply frequency."
+  ],
+  "applications": [
+    "DC power supplies for electronic equipment.",
+    "Battery charging circuits.",
+    "AC to DC converters in adapters and chargers.",
+    "Input stage of regulated power supplies (before a voltage regulator)."
+  ],
+  "advantages": [
+    "Only two diodes required, so lower conduction voltage drop than a bridge rectifier (one diode drop per half-cycle instead of two).",
+    "Simpler diode arrangement than a bridge rectifier."
+  ],
+  "disadvantages": [
+    "Requires a centre-tapped transformer, which is bulkier and costlier than an ordinary two-terminal secondary.",
+    "Each diode must be rated for twice the peak inverse voltage (PIV) compared to a bridge rectifier for the same output.",
+    "Poorer transformer utilization than a bridge rectifier, since only half the winding conducts at a time."
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "No output voltage at all.",
+      "likely_cause": "Open diode, blown fuse, broken transformer/centre-tap connection, or missing input group.",
+      "fix": "Check continuity of the transformer secondary/centre-tap and both diodes; verify input groups (g1-g4) are correctly wired."
+    },
+    {
+      "symptom": "Output shows only half-wave rectification (one hump missing per cycle).",
+      "likely_cause": "One diode branch is missing, open, or wrongly oriented, so one conduction path is broken.",
+      "fix": "Identify the affected diode branch from the missing group and reconnect it with correct polarity."
+    },
+    {
+      "symptom": "Excessive ripple in output.",
+      "likely_cause": "Filter capacitor missing, undersized, or load resistance too low (drawing too much current).",
+      "fix": "Verify the filter capacitor connection and increase capacitance or load resistance if needed."
+    },
+    {
+      "symptom": "Output voltage much lower than expected.",
+      "likely_cause": "Extra loading, wrong meter range, or a diode conducting with reduced efficiency due to a poor connection.",
+      "fix": "Recheck all group connections, meter range, and diode orientation."
+    },
+    {
+      "symptom": "Capacitor heats up or shows damage.",
+      "likely_cause": "Reversed capacitor polarity.",
+      "fix": "Immediately power off, correct capacitor polarity as per its output rail group."
+    }
+  ],
+  "common_mistakes": [
+    "Connecting a diode with reversed polarity.",
+    "Missing or mis-wiring the centre-tap return connection.",
+    "Connecting the filter capacitor with reversed polarity.",
+    "Using the multimeter in the wrong mode/range (AC instead of DC or wrong voltage range).",
+    "Loose or floating connections at shared junction nodes.",
+    "Forgetting to switch off supply before altering connections."
+  ],
+  "viva_questions": [
+    {
+      "question": "Why does a full wave centre-tap rectifier need a centre-tapped transformer?",
+      "answer": "Because the centre tap provides the common reference/return point that lets each diode individually rectify one half of the AC cycle using only two diodes instead of four."
+    },
+    {
+      "question": "What is the ripple frequency of a full-wave rectifier for a 50Hz AC input?",
+      "answer": "100Hz, i.e., twice the input frequency, since both half cycles are rectified."
+    },
+    {
+      "question": "What happens if one diode branch is removed or open?",
+      "answer": "The circuit degrades to half-wave rectification; only one half-cycle is rectified, average DC output drops and ripple increases significantly."
+    },
+    {
+      "question": "Why must each diode in a centre-tap rectifier withstand a higher PIV than in a bridge rectifier?",
+      "answer": "Because during the non-conducting half-cycle, the reverse voltage across the idle diode is the sum of both half-secondary peak voltages, i.e. PIV = 2 x Vm."
+    },
+    {
+      "question": "What is the role of the filter capacitor?",
+      "answer": "It smooths the pulsating DC output by storing charge during the voltage peaks and releasing it during the dips, reducing ripple and giving a steadier DC output."
+    }
+  ],
+  "references": [
+    "Boylestad, R. L., Electronic Devices and Circuit Theory, Pearson Education.",
+    "Sedra, A. S. & Smith, K. C., Microelectronic Circuits, Oxford University Press.",
+    "Institution laboratory manual for Basic Electrical and Electronics Engineering."
+  ],
+  "correct_groups": {
+    "g1": [
+      ["1", "5", "10", "11", "26"]
+    ],
+    "g2": [
+      ["2", "3", "7", "14", "25"]
+    ],
+    "g3": [
+      ["6", "12", "13", "17", "19"]
+    ],
+    "g4": [
+      ["4", "8", "9", "18", "22"]
+    ],
+    "g5": [
+      ["15", "30"],
+      ["15", "31"],
+      ["15", "32"],
+      ["15", "33"],
+      ["15", "30", "31"],
+      ["15", "30", "32"],
+      ["15", "30", "33"],
+      ["15", "31", "32"],
+      ["15", "31", "33"],
+      ["15", "32", "33"]
+    ],
+    "g6": [
+      ["16", "30"],
+      ["16", "31"],
+      ["16", "32"],
+      ["16", "33"],
+      ["16", "30", "31"],
+      ["16", "30", "32"],
+      ["16", "30", "33"],
+      ["16", "31", "32"],
+      ["16", "31", "33"],
+      ["16", "32", "33"]
+    ]
+  },
+  "group_metadata": {
+    "g1": {
+      "component_name": "Diode D1 branch (secondary input + conduction path)",
+      "category": "diode",
+      "purpose": "Connects one half of the centre-tapped secondary through Diode D1 into the shared output junction, forming the path that conducts during the half-cycle when D1 is forward biased.",
+      "expected_nodes": ["1", "5", "10", "11", "26"],
+      "description": "This group wires the top-half secondary tap through D1's anode/cathode path into the shared output node. It is one of the two alternating conduction paths that must be intact for full-wave rectification.",
+      "effect_if_missing": "Without this connection, D1's conduction path is broken. The circuit loses rectification for the half-cycle that depends on D1, so the output degrades to half-wave rectification with a missing lobe and roughly half the expected average DC voltage.",
+      "effect_if_wrong": "If wired with reversed polarity or to the wrong node, D1 may never conduct or may cause excessive current during one half-cycle, risking diode damage.",
+      "next_step": "Verify D1's orientation (band/cathode marking) and confirm nodes 1, 5, 10, 11, and 26 are connected exactly as per the wiring table."
+    },
+    "g2": {
+      "component_name": "Diode D2 branch (secondary input + conduction path)",
+      "category": "diode",
+      "purpose": "Connects the other half of the centre-tapped secondary through Diode D2 into the shared output junction, forming the path that conducts during the opposite half-cycle to D1.",
+      "expected_nodes": ["2", "3", "7", "14", "25"],
+      "description": "This group forms D2's conduction path, the counterpart to D1 for the opposite half-cycle of the AC input.",
+      "effect_if_missing": "D2's path being open means the opposite half-cycle current cannot be routed through the load via D2, again resulting in half-wave-like output and a missing lobe on the CRO.",
+      "effect_if_wrong": "Reversed or misplaced D2 can block conduction entirely for that half cycle or cause an unexpected short.",
+      "next_step": "Check D2 orientation and confirm nodes 2, 3, 7, 14, and 25 match the wiring table."
+    },
+    "g3": {
+      "component_name": "Centre-tap return path (block A)",
+      "category": "reference",
+      "purpose": "Ties the transformer centre tap to the circuit's common/return reference, completing the loop for D1's conduction path.",
+      "expected_nodes": ["6", "12", "13", "17", "19"],
+      "description": "The centre tap acts as the DC negative / ground reference for the rectifier. This group represents one physical terminal block for that reference connection.",
+      "effect_if_missing": "If this return path is missing, current has no complete loop back to the transformer during the associated half-cycle, so effectively no current flows for that half-cycle.",
+      "effect_if_wrong": "A wrongly connected centre-tap path can cause a short or an incomplete conduction loop, and may stress the associated diode with unexpected reverse voltage.",
+      "next_step": "Verify the centre-tap connection and confirm nodes 6, 12, 13, 17, and 19 are correctly wired."
+    },
+    "g4": {
+      "component_name": "Centre-tap return path (block B)",
+      "category": "reference",
+      "purpose": "Ties the transformer centre tap to the circuit's common/return reference for D2's conduction path, on a redundant terminal block.",
+      "expected_nodes": ["4", "8", "9", "18", "22"],
+      "description": "This group is the second physical terminal block providing the centre-tap/common reference connection, completing the loop for D2's half-cycle.",
+      "effect_if_missing": "Without this group, the D2 return loop cannot complete, so the corresponding half-cycle contributes no current to the load, again producing a half-wave-like, lower-average output.",
+      "effect_if_wrong": "Wrong node here can short the return path or prevent conduction, similar in effect to a missing connection but with added risk of excess current.",
+      "next_step": "Check and confirm nodes 4, 8, 9, 18, and 22 are correctly wired."
+    },
+    "g5": {
+      "component_name": "DC Output Positive Rail to Multimeter/CRO (+)",
+      "category": "measurement",
+      "purpose": "Connects the rectifier's DC positive output terminal (node 15) to any one or two of the four redundant measurement terminal blocks (30/31/32/33), allowing the output DC voltage and waveform to be measured.",
+      "expected_nodes": ["15", "30", "31", "32", "33"],
+      "description": "Node 15 is the positive DC output rail after rectification (and filter capacitor, if connected). Nodes 30/31/32/33 are electrically-redundant terminal points for the positive measurement lead -- any one or two of them wired to node 15 counts as correct.",
+      "effect_if_missing": "The multimeter/CRO will show no reading or an unstable/floating reading, since the positive probe is not actually connected to the output rail.",
+      "effect_if_wrong": "Connecting to a node other than 15 (or its redundant terminals) can give a false or zero voltage reading, or probe the wrong part of the circuit, leading to a misleading conclusion about circuit health.",
+      "next_step": "Confirm node 15 is the true DC+ output and that the positive measurement lead is connected via any one or two of nodes 30, 31, 32, 33."
+    },
+    "g6": {
+      "component_name": "DC Output Negative Rail / Ground to Multimeter/CRO (-)",
+      "category": "measurement",
+      "purpose": "Connects the rectifier's DC negative/ground output terminal (node 16) to any one or two of the four redundant measurement terminal blocks (30/31/32/33).",
+      "expected_nodes": ["16", "30", "31", "32", "33"],
+      "description": "Node 16 is the negative DC output rail / circuit ground. Nodes 30/31/32/33 are electrically-redundant terminal points for the negative measurement lead -- any one or two of them wired to node 16 counts as correct.",
+      "effect_if_missing": "No complete measurement loop exists, so the multimeter/CRO cannot give a valid DC voltage/waveform reading.",
+      "effect_if_wrong": "Measuring from a node other than 16 (or its redundant terminals) can produce an incorrect or noisy reading and make it look like the rectifier is faulty when it may not be.",
+      "next_step": "Confirm node 16 is the true DC- / ground rail and that the negative measurement lead is connected via any one or two of nodes 30, 31, 32, 33."
+    }
+  },
+  "node_map": {
+    "1": { "name": "Diode D1 branch terminal", "component": "D1", "terminal": "leg" },
+    "2": { "name": "Diode D2 branch terminal", "component": "D2", "terminal": "leg" },
+    "3": { "name": "Diode D2 branch terminal", "component": "D2", "terminal": "leg" },
+    "4": { "name": "Centre-tap return terminal block B", "component": "Transformer", "terminal": "centre-tap" },
+    "5": { "name": "Diode D1 branch terminal", "component": "D1", "terminal": "leg" },
+    "6": { "name": "Centre-tap return terminal block A", "component": "Transformer", "terminal": "centre-tap" },
+    "7": { "name": "Diode D2 branch terminal", "component": "D2", "terminal": "leg" },
+    "8": { "name": "Centre-tap return terminal block B", "component": "Transformer", "terminal": "centre-tap" },
+    "9": { "name": "Centre-tap return terminal block B", "component": "Transformer", "terminal": "centre-tap" },
+    "10": { "name": "Diode D1 branch terminal", "component": "D1", "terminal": "leg" },
+    "11": { "name": "Diode D1 branch terminal", "component": "D1", "terminal": "leg" },
+    "12": { "name": "Centre-tap return terminal block A", "component": "Transformer", "terminal": "centre-tap" },
+    "13": { "name": "Centre-tap return terminal block A", "component": "Transformer", "terminal": "centre-tap" },
+    "14": { "name": "Diode D2 branch terminal", "component": "D2", "terminal": "leg" },
+    "15": { "name": "DC Output Positive Terminal", "component": "Output_Terminals", "terminal": "+" },
+    "16": { "name": "DC Output Negative Terminal / Ground", "component": "Output_Terminals", "terminal": "-" },
+    "17": { "name": "Centre-tap return terminal block A", "component": "Transformer", "terminal": "centre-tap" },
+    "18": { "name": "Centre-tap return terminal block B", "component": "Transformer", "terminal": "centre-tap" },
+    "19": { "name": "Centre-tap return terminal block A (redundant)", "component": "Transformer", "terminal": "centre-tap" },
+    "22": { "name": "Centre-tap return terminal block B (redundant)", "component": "Transformer", "terminal": "centre-tap" },
+    "25": { "name": "Diode D2 branch terminal (redundant)", "component": "D2", "terminal": "leg" },
+    "26": { "name": "Diode D1 branch terminal (redundant)", "component": "D1", "terminal": "leg" },
+    "30": { "name": "Multimeter/CRO Negative Probe Terminal", "component": "Multimeter", "terminal": "V-" },
+    "31": { "name": "Multimeter/CRO Positive Probe Terminal", "component": "Multimeter", "terminal": "V+" },
+    "32": { "name": "Multimeter/CRO Positive Probe Terminal (redundant)", "component": "Multimeter", "terminal": "V+" },
+    "33": { "name": "Multimeter/CRO Negative Probe Terminal (redundant)", "component": "Multimeter", "terminal": "V-" }
+  },
+  "component_map": {
+    "D1": {
+      "display_name": "Diode D1",
+      "nodes": ["1", "5", "10", "11", "26"],
+      "associated_groups": ["g1"],
+      "description": "Conducts during the half-cycle where the top secondary terminal is positive relative to the centre tap."
+    },
+    "D2": {
+      "display_name": "Diode D2",
+      "nodes": ["2", "3", "7", "14", "25"],
+      "associated_groups": ["g2"],
+      "description": "Conducts during the half-cycle where the bottom secondary terminal is positive relative to the centre tap."
+    },
+    "Transformer_Centre_Tap": {
+      "display_name": "Transformer Centre Tap / Common Return",
+      "nodes": ["4", "6", "8", "9", "12", "13", "17", "18", "19", "22"],
+      "associated_groups": ["g3", "g4"],
+      "description": "Common return/reference point for both diode branches, split across two redundant terminal blocks (g3, g4) on this trainer."
+    },
+    "Output_Terminals": {
+      "display_name": "DC Output Terminals",
+      "nodes": ["15", "16"],
+      "positive_node": "15",
+      "negative_node": "16",
+      "associated_groups": ["g5", "g6"],
+      "description": "Final DC output points, +Vdc at node 15 and -Vdc/GND at node 16."
+    },
+    "Multimeter": {
+      "display_name": "Digital Multimeter / CRO",
+      "nodes": ["30", "31", "32", "33"],
+      "positive_probe_nodes": ["31", "32"],
+      "negative_probe_nodes": ["30", "33"],
+      "associated_groups": ["g5", "g6"],
+      "description": "Measures DC output voltage/waveform across nodes 15/16 via the redundant probe terminal blocks."
+    }
+  }
+}

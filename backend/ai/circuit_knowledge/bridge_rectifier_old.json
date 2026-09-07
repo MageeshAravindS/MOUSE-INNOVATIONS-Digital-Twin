@@ -1,0 +1,173 @@
+{
+  "experiment_id": "bridge_rectifier",
+  "experiment_name": "Single Phase Bridge Rectifier",
+  "category": "Power Electronics",
+  "difficulty": "Beginner",
+  "objective": "To study the operation and output characteristics of a single-phase bridge rectifier.",
+
+  "theory": {
+    "overview": "A bridge rectifier converts alternating current (AC) into pulsating direct current (DC) using four diodes arranged in a bridge configuration. During the positive half cycle, one pair of diodes conducts, and during the negative half cycle, the opposite pair conducts. This allows current to flow through the load in the same direction during both half cycles.",
+    "applications": [
+      "DC Power Supplies",
+      "Battery Chargers",
+      "UPS Systems",
+      "Industrial Rectifiers",
+      "Electronic Equipment"
+    ]
+  },
+
+  "connections": [
+    {
+      "id": "C1",
+      "from": 0,
+      "to": 0,
+      "component": "AC Input Terminal 1",
+      "purpose": "Provides one terminal of the AC supply to the bridge rectifier.",
+      "importance": "Essential",
+      "effect_if_wrong": "The rectifier receives no AC input and the circuit will not operate.",
+      "recommendation": "Connect the AC source to the correct input terminal.",
+      "common_mistakes": [
+        "Connected to DC output",
+        "Connected to diode output",
+        "Wrong AC terminal"
+      ]
+    },
+    {
+      "id": "C2",
+      "from": 0,
+      "to": 0,
+      "component": "AC Input Terminal 2",
+      "purpose": "Completes the AC input path.",
+      "importance": "Essential",
+      "effect_if_wrong": "The AC source becomes open-circuited.",
+      "recommendation": "Reconnect the AC source correctly."
+    },
+    {
+      "id": "C3",
+      "from": 0,
+      "to": 0,
+      "component": "Diode D1",
+      "purpose": "Conducts during the positive half cycle.",
+      "importance": "Critical",
+      "effect_if_wrong": "Positive half-cycle rectification will fail.",
+      "recommendation": "Connect the anode and cathode correctly."
+    },
+    {
+      "id": "C4",
+      "from": 0,
+      "to": 0,
+      "component": "Diode D2",
+      "purpose": "Conducts during the negative half cycle.",
+      "importance": "Critical",
+      "effect_if_wrong": "Negative half-cycle rectification will fail.",
+      "recommendation": "Verify diode orientation."
+    },
+    {
+      "id": "C5",
+      "from": 0,
+      "to": 0,
+      "component": "Positive Output",
+      "purpose": "Provides positive DC output to the load.",
+      "importance": "Essential",
+      "effect_if_wrong": "Incorrect output polarity.",
+      "recommendation": "Reconnect to the positive output node."
+    },
+    {
+      "id": "C6",
+      "from": 0,
+      "to": 0,
+      "component": "Negative Output",
+      "purpose": "Provides the return path for DC current.",
+      "importance": "Essential",
+      "effect_if_wrong": "Output circuit remains incomplete.",
+      "recommendation": "Reconnect the negative terminal correctly."
+    },
+    {
+      "id": "C7",
+      "from": 0,
+      "to": 0,
+      "component": "Load Resistor",
+      "purpose": "Consumes the rectified DC power.",
+      "importance": "Essential",
+      "effect_if_wrong": "No output voltage across the load.",
+      "recommendation": "Connect the load between the positive and negative output terminals."
+    },
+    {
+      "id": "C8",
+      "from": 0,
+      "to": 0,
+      "component": "Filter Capacitor",
+      "purpose": "Reduces ripple voltage and smooths the DC output.",
+      "importance": "Optional",
+      "effect_if_wrong": "High ripple voltage at the output.",
+      "recommendation": "Connect the capacitor across the load with correct polarity."
+    }
+  ],
+
+  "fault_library": {
+    "wrong_connection": {
+      "title": "Incorrect Connection",
+      "message": "The detected connection does not match the expected wiring.",
+      "instruction": "Disconnect the incorrect wire and reconnect it according to the circuit diagram."
+    },
+    "missing_connection": {
+      "title": "Missing Connection",
+      "message": "One or more required wires are not connected.",
+      "instruction": "Complete all mandatory connections before running the experiment."
+    },
+    "extra_connection": {
+      "title": "Extra Connection",
+      "message": "An additional wire has been detected.",
+      "instruction": "Remove the unnecessary connection."
+    },
+    "short_circuit": {
+      "title": "Short Circuit",
+      "message": "Two incompatible nodes have been directly connected.",
+      "instruction": "Disconnect immediately to prevent component damage."
+    },
+    "reverse_polarity": {
+      "title": "Reverse Polarity",
+      "message": "A polarized component has been connected in reverse.",
+      "instruction": "Reconnect with the correct polarity."
+    }
+  },
+
+  "ai_prompt_rules": {
+    "tone": "Professional Electrical Engineering Laboratory Instructor",
+    "never_say": [
+      "Group 1 incorrect",
+      "Validation failed",
+      "Wrong answer",
+      "Node mismatch"
+    ],
+    "always_include": [
+      "Detected Connection",
+      "Expected Connection",
+      "Purpose",
+      "Practical Effect",
+      "Recommendation"
+    ]
+  },
+
+  "viva_questions": [
+    {
+      "question": "Why are four diodes used in a bridge rectifier?",
+      "answer": "To achieve full-wave rectification without requiring a center-tapped transformer."
+    },
+    {
+      "question": "Why is a filter capacitor used?",
+      "answer": "To reduce ripple voltage and produce a smoother DC output."
+    },
+    {
+      "question": "What is ripple voltage?",
+      "answer": "Ripple voltage is the unwanted AC component present in the rectified DC output."
+    }
+  ],
+
+  "safety": [
+    "Disconnect power before changing any wiring.",
+    "Verify diode polarity before energizing the circuit.",
+    "Never short the DC output terminals.",
+    "Use the correct AC input terminals only."
+  ]
+}

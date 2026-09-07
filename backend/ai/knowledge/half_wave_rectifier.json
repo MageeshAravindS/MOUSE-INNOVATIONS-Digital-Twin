@@ -1,0 +1,46 @@
+{
+  "experiment": "Half Wave Rectifier",
+  "experiment_name": "half_wave_rectifier",
+  "description": "Single Phase Half Wave Rectifier Practical",
+  "aim": "To construct a single phase half wave rectifier circuit, observe the rectified DC output waveform on a CRO, and measure the DC output voltage across the load for a given AC input.",
+  "objective": [
+    "Understand the working principle of a half wave rectifier using a single diode.",
+    "Verify that the diode conducts only during the positive half-cycle and blocks the negative half-cycle.",
+    "Measure the DC output voltage, ripple factor, and compare with theoretical formulas.",
+    "Observe the effect of a parallel filter capacitor on ripple voltage."
+  ],
+  "theory": "A half wave rectifier is the simplest rectifier circuit, converting AC into pulsating DC using a single diode. When the AC input goes positive, the diode is forward biased and conducts, allowing current to flow through the load. When the input goes negative, the diode is reverse biased and behaves as an open circuit, blocking current. Consequently, only one half of the input cycle appears across the load. The DC output voltage without filter is Vdc = Vm / pi, with a theoretical maximum rectification efficiency of 40.6% and a ripple factor of 1.21.",
+  "working_principle": "The transformer secondary provides AC voltage. During the positive half cycle, diode anode is positive with respect to cathode, and conduction occurs through the load resistor. During the negative half cycle, the diode cathode is more positive than the anode, blocking current. Adding a shunt capacitor across the load smooths the pulsating output by storing energy during conduction and discharging through RL during the blocked half cycle.",
+  "apparatus": [
+    "Half Wave Rectifier trainer kit / board",
+    "Step-down transformer (230V/12V or specified rating)",
+    "Silicon diode (e.g. 1N4007)",
+    "Filter capacitor (e.g. 470uF)",
+    "Load resistor RL (e.g. 1kΩ)",
+    "Digital Multimeter and Dual-channel CRO"
+  ],
+  "components": [
+    {"name": "Step-Down Transformer", "role": "Steps 230V AC mains down to safe 12V AC secondary."},
+    {"name": "Diode D1", "role": "Conducts during positive half cycle, blocks during negative half cycle."},
+    {"name": "Load Resistor RL", "role": "Converts rectified current into output voltage drop for measurement."},
+    {"name": "Filter Capacitor C", "role": "Reduces ripple by charging on peaks and discharging through RL."}
+  ],
+  "procedure": [
+    "Ensure the AC mains supply is switched off before wiring.",
+    "Connect the transformer secondary terminal to the anode of diode D1.",
+    "Connect diode D1 cathode to the top terminal of the load resistor RL.",
+    "Connect the bottom terminal of the load resistor RL back to the other transformer secondary terminal.",
+    "Connect the multimeter and CRO across the load resistor.",
+    "Turn on power, observe and record Vdc and output waveform on CRO."
+  ],
+  "precautions": [
+    "Switch off mains power before touching or changing any patch cords.",
+    "Observe diode cathode band orientation to prevent reverse conduction or shorting.",
+    "Observe electrolytic capacitor polarity if filter is used."
+  ],
+  "expected_output": {
+    "formula_no_filter": "Vdc = Vm / pi ~= 0.318 * Vm",
+    "formula_with_filter": "Vdc ~= Vm - (Idc / (2 * f * C))",
+    "ripple_frequency": "50 Hz (same as line frequency)"
+  }
+}

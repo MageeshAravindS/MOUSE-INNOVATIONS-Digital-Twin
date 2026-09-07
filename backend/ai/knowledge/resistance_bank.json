@@ -1,0 +1,82 @@
+{
+  "experiment": "Resistance Bank Training Kit",
+  "experiment_name": "resistance_bank",
+  "description": "Interactive Resistance Bank Trainer Kit for practical study of series, parallel, and complex resistor networks, equivalent resistance (Rth) calculation, and Nodal Laplacian analysis.",
+  "aim": "To construct various resistor networks (series, parallel, series-parallel, bridge) on the trainer board using jumper wires, calculate the theoretical equivalent resistance (Rth) between two measurement terminals by hand, and verify against the exact nodal Laplacian solver.",
+  "objective": [
+    "Understand equivalent resistance calculation in series, parallel, and bridge topologies.",
+    "Practice jumpering circuit connections across physical through-hole resistors on a lab trainer.",
+    "Formulate node equations and apply Ohm's law / Kirchhoff's laws to complex resistor networks.",
+    "Learn to identify open circuits, short circuits, and redundant connection paths."
+  ],
+  "theory": "In any resistor network, the total equivalent resistance (Rth) between two terminals A and B represents the single equivalent resistance that draws the same current from an applied voltage source. For resistors in series, current is identical and resistances sum directly: R_total = R1 + R2 + ... + Rn. For resistors in parallel, voltage across each branch is identical and conductances sum: 1/R_total = 1/R1 + 1/R2 + ... + 1/Rn. For general, non-reducible or bridge networks, nodal analysis using the conductance Laplacian matrix (G · V = I) solves for the exact terminal driving-point impedance.",
+  "working_principle": "The Resistance Bank board consists of 15 precision through-hole resistors with gold-plated terminal sockets (numbered 1 through 30). By inserting jumper patch cords between sockets, students link resistor pins into electrical nodes. Connecting two resistor leads with a jumper places those two nodes at the same potential (shorted together). Any two sockets on the board can then be designated as measurement terminals Node A and Node B to calculate and verify the equivalent resistance.",
+  "apparatus": [
+    "Resistance Bank Lab Trainer Kit (15 fixed through-hole resistors)",
+    "Set of flexible jumper patch cords / wire links",
+    "Digital Multimeter (DMM) for resistance measurement (Ohmmeter mode)",
+    "Calculators and notebook for manual nodal analysis"
+  ],
+  "resistors": [
+    {"id": "R1", "name": "1K Resistor", "sockets": ["1", "2"], "ohms": 1000, "label": "1K"},
+    {"id": "R2", "name": "47R Resistor", "sockets": ["7", "8"], "ohms": 47, "label": "47R"},
+    {"id": "R3", "name": "4K7 Resistor", "sockets": ["15", "16"], "ohms": 4700, "label": "4K7"},
+    {"id": "R4", "name": "3K3 Resistor", "sockets": ["21", "22"], "ohms": 3300, "label": "3K3"},
+    {"id": "R5", "name": "6K7 Resistor", "sockets": ["9", "10"], "ohms": 6700, "label": "6K7"},
+    {"id": "R6", "name": "70R Resistor", "sockets": ["17", "18"], "ohms": 70, "label": "70R"},
+    {"id": "R7", "name": "68K Resistor", "sockets": ["23", "24"], "ohms": 68000, "label": "68K"},
+    {"id": "R8", "name": "22R Resistor", "sockets": ["3", "4"], "ohms": 22, "label": "22R"},
+    {"id": "R9", "name": "680R (Upper) Resistor", "sockets": ["11", "12"], "ohms": 680, "label": "680R"},
+    {"id": "R10", "name": "100R (Upper) Resistor", "sockets": ["25", "26"], "ohms": 100, "label": "100R"},
+    {"id": "R11", "name": "33K Resistor", "sockets": ["27", "28"], "ohms": 33000, "label": "33K"},
+    {"id": "R12", "name": "470R Resistor", "sockets": ["5", "6"], "ohms": 470, "label": "470R"},
+    {"id": "R13", "name": "2K2 Resistor", "sockets": ["13", "14"], "ohms": 2200, "label": "2K2"},
+    {"id": "R14", "name": "680R (Lower) Resistor", "sockets": ["19", "20"], "ohms": 680, "label": "680R"},
+    {"id": "R15", "name": "100R (Lower) Resistor", "sockets": ["29", "30"], "ohms": 100, "label": "100R"}
+  ],
+  "node_map": {
+    "1": {"name": "Socket 1 (R1 1K Terminal A)"},
+    "2": {"name": "Socket 2 (R1 1K Terminal B)"},
+    "3": {"name": "Socket 3 (R8 22R Terminal A)"},
+    "4": {"name": "Socket 4 (R8 22R Terminal B)"},
+    "5": {"name": "Socket 5 (R12 470R Terminal A)"},
+    "6": {"name": "Socket 6 (R12 470R Terminal B)"},
+    "7": {"name": "Socket 7 (R2 47R Terminal A)"},
+    "8": {"name": "Socket 8 (R2 47R Terminal B)"},
+    "9": {"name": "Socket 9 (R5 6K7 Terminal A)"},
+    "10": {"name": "Socket 10 (R5 6K7 Terminal B)"},
+    "11": {"name": "Socket 11 (R9 680R Terminal A)"},
+    "12": {"name": "Socket 12 (R9 680R Terminal B)"},
+    "13": {"name": "Socket 13 (R13 2K2 Terminal A)"},
+    "14": {"name": "Socket 14 (R13 2K2 Terminal B)"},
+    "15": {"name": "Socket 15 (R3 4K7 Terminal A)"},
+    "16": {"name": "Socket 16 (R3 4K7 Terminal B)"},
+    "17": {"name": "Socket 17 (R6 70R Terminal A)"},
+    "18": {"name": "Socket 18 (R6 70R Terminal B)"},
+    "19": {"name": "Socket 19 (R14 680R Terminal A)"},
+    "20": {"name": "Socket 20 (R14 680R Terminal B)"},
+    "21": {"name": "Socket 21 (R4 3K3 Terminal A)"},
+    "22": {"name": "Socket 22 (R4 3K3 Terminal B)"},
+    "23": {"name": "Socket 23 (R7 68K Terminal A)"},
+    "24": {"name": "Socket 24 (R7 68K Terminal B)"},
+    "25": {"name": "Socket 25 (R10 100R Terminal A)"},
+    "26": {"name": "Socket 26 (R10 100R Terminal B)"},
+    "27": {"name": "Socket 27 (R11 33K Terminal A)"},
+    "28": {"name": "Socket 28 (R11 33K Terminal B)"},
+    "29": {"name": "Socket 29 (R15 100R Terminal A)"},
+    "30": {"name": "Socket 30 (R15 100R Terminal B)"}
+  },
+  "procedure": [
+    "Select two or more resistors on the board to combine.",
+    "Insert jumper wires between socket terminals to link resistors in series, parallel, or a combination.",
+    "Designate two open sockets as measurement terminals Node A and Node B.",
+    "Calculate the equivalent resistance (Rth) between Node A and Node B by hand using series/parallel reduction or nodal analysis.",
+    "Enter Node A, Node B, and your hand-calculated Rth in the Practical Evaluation panel and check your answer."
+  ],
+  "precautions": [
+    "Do not short circuit both terminals of a resistor with a single jumper unless intentionally bypassing it.",
+    "Ensure jumper pins are securely seated into socket jacks.",
+    "Make sure measurement terminals Node A and Node B are not shorted together (which results in 0 ohms).",
+    "Ensure there is a continuous electrical path between Node A and Node B through the resistor network."
+  ]
+}

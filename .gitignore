@@ -1,0 +1,38 @@
+# Environment Variables & Secrets (CRITICAL: Never commit to Git)
+.env
+backend/.env
+*.env.local
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Database files (local dev data)
+*.db
+*.sqlite
+*.sqlite3
+backend/edunexus.db
+
+# Dynamic User Uploads & Generated Reports
+backend/uploads/
+backend/uploads/reports/
+uploads/
+
+# OS and Editor metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary scratch tests & benchmarks
+scratch/
+.tempmediaStorage/

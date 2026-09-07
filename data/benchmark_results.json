@@ -1,0 +1,344 @@
+{
+  "api": {
+    "provider": "api",
+    "model": "qwen/qwen3.8-27b",
+    "accuracy_pct": 80.0,
+    "passed_count": 8,
+    "total_cases": 10,
+    "avg_latency_s": 22.95,
+    "token_rate_tok_s": 21.4,
+    "cases": [
+      {
+        "test_id": "TC-01",
+        "name": "Ammeter in Parallel Fault",
+        "category": "wiring_fault",
+        "latency": 1.77,
+        "tokens": 297,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 100.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "**Problem**\nThe ammeter (A1) is connected in parallel with the resistor (R1) instead of in series. Since ammeters have very low internal resistance, this create..."
+      },
+      {
+        "test_id": "TC-02",
+        "name": "Voltmeter in Series Fault",
+        "category": "wiring_fault",
+        "latency": 1.32,
+        "tokens": 294,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 50.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "**Problem**\nThe circuit is open (infinite resistance) because the voltmeter is connected in series with the load (Resistor R1) instead of in parallel.\n\n**Why**\n..."
+      },
+      {
+        "test_id": "TC-03",
+        "name": "Direct Mains Short Circuit Hazard",
+        "category": "safety_hazard",
+        "latency": 1.85,
+        "tokens": 686,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 20.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "Based on the connections described, the circuit is in a **Critical Fault State (Double Short Circuit)**.\n\nHere is the step-by-step evaluation:\n\n### 1. Analysis ..."
+      },
+      {
+        "test_id": "TC-04",
+        "name": "Correct Bridge Rectifier Wiring",
+        "category": "correct_circuit",
+        "latency": 33.45,
+        "tokens": 746,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 50.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "Based on the connections provided, here is the evaluation of the circuit state:\n\n### **Circuit State: FUNCTIONAL (Normal Operation)**\n\n#### **Detailed Analysis:..."
+      },
+      {
+        "test_id": "TC-05",
+        "name": "Reversed Diode Polarity",
+        "category": "wiring_fault",
+        "latency": 47.28,
+        "tokens": 802,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 100.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "Based on the circuit connections provided, here is the step-by-step evaluation of the circuit state:\n\n### 1. Circuit Configuration Analysis\n*   **Standard Half-..."
+      },
+      {
+        "test_id": "TC-06",
+        "name": "Theory Question: Filter Capacitor",
+        "category": "theory",
+        "latency": 49.05,
+        "tokens": 52,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 75.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "The electrolytic capacitor acts as a filter that smooths the pulsating DC output from the rectifier by charging during voltage peaks and discharging during trou..."
+      },
+      {
+        "test_id": "TC-07",
+        "name": "Ambiguous Incomplete State",
+        "category": "ambiguous",
+        "latency": 3.25,
+        "tokens": 372,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 25.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": false
+        },
+        "response_preview": "**No, I cannot determine if your circuit wiring is ready to power on.**\n\nI am an AI assistant and **do not have access to your physical environment, camera, or ..."
+      },
+      {
+        "test_id": "TC-08",
+        "name": "Resistance Bank Series Equivalent Resistance",
+        "category": "rb_series",
+        "latency": 23.38,
+        "tokens": 845,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 80.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "Based on the provided circuit parameters, here is the evaluation of the circuit state and the next steps.\n\n### 1. Circuit State Evaluation\n\n**Topology Analysis:..."
+      },
+      {
+        "test_id": "TC-09",
+        "name": "Resistance Bank Parallel Combination",
+        "category": "rb_parallel",
+        "latency": 49.41,
+        "tokens": 304,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 100.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "Based on the circuit description provided, here is the step-by-step evaluation to determine the Thevenin equivalent resistance ($R_{th}$).\n\n### 1. Identify the ..."
+      },
+      {
+        "test_id": "TC-10",
+        "name": "Resistance Bank Short Circuit Hazard",
+        "category": "safety_hazard",
+        "latency": 18.76,
+        "tokens": 504,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 75.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "Based on the detected jumper connections, here is the evaluation of the circuit state:\n\n### **Circuit State: Short Circuit Across the 1K Resistor**\n\n#### **Anal..."
+      }
+    ]
+  },
+  "ollama": {
+    "provider": "ollama",
+    "model": "qwen3:4b",
+    "accuracy_pct": 20.0,
+    "passed_count": 2,
+    "total_cases": 10,
+    "avg_latency_s": 18.18,
+    "token_rate_tok_s": 18.3,
+    "cases": [
+      {
+        "test_id": "TC-01",
+        "name": "Ammeter in Parallel Fault",
+        "category": "wiring_fault",
+        "latency": 23.03,
+        "tokens": 350,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 0.0,
+          "safety_pass": true,
+          "fix_pass": false,
+          "hallucination_free": true
+        },
+        "response_preview": "Hello! I am your EduNexus AI Laboratory Instructor at Mouse Innovations. How can I assist you with your experiment setup or circuit theory today?"
+      },
+      {
+        "test_id": "TC-02",
+        "name": "Voltmeter in Series Fault",
+        "category": "wiring_fault",
+        "latency": 17.12,
+        "tokens": 350,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 0.0,
+          "safety_pass": true,
+          "fix_pass": false,
+          "hallucination_free": true
+        },
+        "response_preview": "Hello! I am your EduNexus AI Laboratory Instructor at Mouse Innovations. How can I assist you with your experiment setup or circuit theory today?"
+      },
+      {
+        "test_id": "TC-03",
+        "name": "Direct Mains Short Circuit Hazard",
+        "category": "safety_hazard",
+        "latency": 18.06,
+        "tokens": 350,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 0.0,
+          "safety_pass": false,
+          "fix_pass": false,
+          "hallucination_free": true
+        },
+        "response_preview": "Hello! I am your EduNexus AI Laboratory Instructor at Mouse Innovations. How can I assist you with your experiment setup or circuit theory today?"
+      },
+      {
+        "test_id": "TC-04",
+        "name": "Correct Bridge Rectifier Wiring",
+        "category": "correct_circuit",
+        "latency": 16.58,
+        "tokens": 338,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 50.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "The circuit is operating correctly. With all diodes properly connected to AC taps 12/18 and output rails 15/16 linked to the load resistor and multimeter, the b..."
+      },
+      {
+        "test_id": "TC-05",
+        "name": "Reversed Diode Polarity",
+        "category": "wiring_fault",
+        "latency": 17.44,
+        "tokens": 350,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 25.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "This configuration is incorrect for a half-wave rectifier. The diode is reverse-biased throughout the AC cycle (AC"
+      },
+      {
+        "test_id": "TC-06",
+        "name": "Theory Question: Filter Capacitor",
+        "category": "theory",
+        "latency": 19.27,
+        "tokens": 350,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 0.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "Hello! I am your EduNexus AI Laboratory Instructor at Mouse Innovations. How can I assist you with your experiment setup or circuit theory today?"
+      },
+      {
+        "test_id": "TC-07",
+        "name": "Ambiguous Incomplete State",
+        "category": "ambiguous",
+        "latency": 16.77,
+        "tokens": 279,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 25.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": false
+        },
+        "response_preview": "No, your circuit wiring is not ready to power on right now. Always verify physical connections, continuity, and proper grounding before applying power\u2014this prev..."
+      },
+      {
+        "test_id": "TC-08",
+        "name": "Resistance Bank Series Equivalent Resistance",
+        "category": "rb_series",
+        "latency": 21.11,
+        "tokens": 350,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 0.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "I'm analyzing your circuit state. Check your component connections, or let me know which node you would like help wiring next."
+      },
+      {
+        "test_id": "TC-09",
+        "name": "Resistance Bank Parallel Combination",
+        "category": "rb_parallel",
+        "latency": 19.15,
+        "tokens": 350,
+        "status": "PASS",
+        "eval_metrics": {
+          "passed": true,
+          "keyword_score": 100.0,
+          "safety_pass": true,
+          "fix_pass": true,
+          "hallucination_free": true
+        },
+        "response_preview": "The equivalent resistance Rth for two identical 680\u03a9 resistors in parallel is calculated as:  \nRth = (680\u03a9 \u00d7 680\u03a9) / (680\u03a9 + 680\u03a9) = 340\u03a9.  \nThis result aligns ..."
+      },
+      {
+        "test_id": "TC-10",
+        "name": "Resistance Bank Short Circuit Hazard",
+        "category": "safety_hazard",
+        "latency": 13.25,
+        "tokens": 253,
+        "status": "FAIL",
+        "eval_metrics": {
+          "passed": false,
+          "keyword_score": 25.0,
+          "safety_pass": false,
+          "fix_pass": false,
+          "hallucination_free": true
+        },
+        "response_preview": "The jumper connection 1-2 directly shorts the 1K resistor. This bypasses the resistor entirely, meaning no current flows through it and it is effectively remove..."
+      }
+    ]
+  }
+}

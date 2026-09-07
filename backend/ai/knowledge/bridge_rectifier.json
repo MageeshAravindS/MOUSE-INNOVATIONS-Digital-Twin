@@ -1,0 +1,845 @@
+{
+  "experiment": "Single Phase Bridge Rectifier",
+  "description": "Single Phase Bridge Rectifier Practical",
+  "_meta_note": "The 'group_metadata' section below maps each node group to a physical component (D1-D4, output rails, meter probes). This mapping was inferred from typical single-phase bridge rectifier trainer layouts because the source file did not label nodes. VERIFY the 'expected_nodes', 'component_name' and node numbers against your actual trainer board / manual before treating this as ground truth, and edit any group_metadata entry that doesn't match your hardware.",
+  "aim": "To construct a single phase bridge rectifier circuit, observe the rectified DC output waveform on a CRO, and measure the DC output voltage across the load for a given AC input.",
+  "objective": [
+    "Understand the working of a full-wave bridge rectifier using four diodes.",
+    "Verify how a bridge rectifier converts AC into pulsating DC without a center-tapped transformer.",
+    "Measure and calculate the DC output voltage, ripple, and compare with theoretical values.",
+    "Identify the effect of a missing or wrongly connected diode on the output waveform."
+  ],
+  "theory": "A bridge rectifier is a full-wave rectifier circuit that uses four diodes (D1, D2, D3, D4) arranged in a bridge configuration to convert an AC input into a pulsating DC output, without requiring a center-tapped transformer. During the positive half-cycle of the AC input, two diagonally opposite diodes (say D1 and D3) become forward biased and conduct, allowing current to flow through the load in one direction. During the negative half-cycle, the other pair of diodes (D2 and D4) becomes forward biased and conducts, again forcing current through the load in the same direction. Because current flows through the load in the same direction during both half-cycles, the output is a full-wave rectified pulsating DC. A filter capacitor placed across the output smooths this pulsating DC into a nearly steady DC voltage by charging during the peaks and discharging through the load during the troughs, reducing ripple.",
+  "working_principle": "The transformer secondary supplies AC to the input terminals of the bridge. On the positive half-cycle, current flows through one diagonal pair of diodes, through the load resistor, and back through the transformer. On the negative half-cycle, the polarity reverses at the input, but the second diagonal diode pair conducts, keeping the current direction through the load unchanged. This diode-pair switching every half-cycle is what produces full-wave rectification. Any single missing or wrongly placed diode breaks one of these two conduction paths, so only half the waveform (one polarity) is rectified, which shows up as a highly pulsating, lower-average output with a missing lobe on the CRO.",
+  "apparatus": [
+    "Bridge Rectifier trainer kit / breadboard",
+    "Step-down transformer (230V/12V or as specified)",
+    "4 x Silicon diodes (e.g., 1N4007) forming the bridge",
+    "Filter capacitor (e.g., 470uF - 1000uF, electrolytic)",
+    "Load resistor (decade resistance box or fixed value)",
+    "Digital Multimeter",
+    "Dual channel CRO / Oscilloscope with probes",
+    "Connecting wires / patch cords",
+    "AC supply (230V mains) with isolation transformer"
+  ],
+  "components": [
+    {
+      "name": "Transformer",
+      "role": "Steps down 230V AC mains to a safe low AC voltage for the rectifier input."
+    },
+    {
+      "name": "Diode D1",
+      "role": "Forward biased during one half-cycle; conducts along with D3 to pass current through the load."
+    },
+    {
+      "name": "Diode D2",
+      "role": "Forward biased during the opposite half-cycle; conducts along with D4 to pass current through the load."
+    },
+    {
+      "name": "Diode D3",
+      "role": "Forward biased along with D1 to complete the return path to the transformer."
+    },
+    {
+      "name": "Diode D4",
+      "role": "Forward biased along with D2 to complete the return path to the transformer."
+    },
+    {
+      "name": "Filter Capacitor",
+      "role": "Smooths the pulsating DC output by charging at the peaks and discharging through the load, reducing ripple."
+    },
+    {
+      "name": "Load Resistor (RL)",
+      "role": "Represents the load drawing DC current; used to measure output voltage and current."
+    },
+    {
+      "name": "Multimeter",
+      "role": "Measures the average/RMS DC output voltage across the load."
+    },
+    {
+      "name": "CRO",
+      "role": "Displays the rectified (and filtered) output waveform for visual verification of full-wave rectification and ripple."
+    }
+  ],
+  "procedure": [
+    "Switch off the AC supply before making any connections.",
+    "Connect the transformer secondary to the AC input terminals of the bridge rectifier (nodes forming group g1-g4 as per the wiring table).",
+    "Connect all four diodes D1, D2, D3, D4 in the bridge configuration, ensuring correct polarity (anode/cathode orientation).",
+    "Connect the load resistor across the DC output terminals of the bridge.",
+    "Connect the filter capacitor across the load resistor, observing correct polarity for the electrolytic capacitor.",
+    "Connect the multimeter (in DC voltage mode) across the output terminals to measure Vdc.",
+    "Connect the CRO probe across the output terminals (and optionally across the transformer secondary) to observe the input and rectified output waveforms.",
+    "Switch on the AC supply.",
+    "Note the DC output voltage on the multimeter.",
+    "Observe and sketch the rectified output waveform on the CRO, with and without the filter capacitor connected.",
+    "Switch off the supply, disconnect one diode at a time to observe the effect of a missing group on the waveform, then restore the correct connection.",
+    "Record all readings and compare with theoretical calculations.",
+    "Switch off the supply after completing all observations."
+  ],
+  "precautions": [
+    "Always switch off the AC mains supply before making or changing any connections.",
+    "Ensure diodes are connected with correct polarity; a reversed diode can short the supply or block rectification.",
+    "Observe correct polarity while connecting the electrolytic filter capacitor; reverse polarity can cause it to heat up or burst.",
+    "Do not exceed the rated voltage/current of the diodes, capacitor, or load resistor.",
+    "Use an isolation transformer and avoid direct contact with mains-side wiring.",
+    "Set the multimeter to the correct range (DC voltage) before measuring the output.",
+    "Double check all connections against the wiring/group table before switching on the supply.",
+    "Keep CRO probes properly grounded and set to the correct volts/division before observing waveforms."
+  ],
+  "expected_output": {
+    "waveform_without_filter": "Full-wave pulsating DC with two humps per input AC cycle, always positive (or always negative depending on output reference).",
+    "waveform_with_filter": "Nearly flat DC with a small ripple riding on top, ripple frequency = 2 x input AC frequency (100Hz for 50Hz mains)."
+  },
+  "expected_voltage": {
+    "formula_no_filter": "Vdc = (2 x Vm) / pi, where Vm is the peak secondary voltage",
+    "formula_with_filter": "Vdc ~= Vm - (Idc / (2 x f x C)), where f is the AC supply frequency and C is the filter capacitance",
+    "typical_value": "For a 12V AC secondary (Vrms), expected unfiltered Vdc is approximately 10.8V and filtered Vdc is close to 16-17V (near peak) depending on load and capacitor size.",
+    "note": "Exact expected voltage depends on the transformer secondary voltage and load used in your specific trainer kit; recompute using the formulas above for your actual component values."
+  },
+  "expected_waveforms": [
+    "Input: Sinusoidal AC waveform across the transformer secondary.",
+    "Output (no capacitor): Full-wave rectified pulsating DC, both half-cycles rectified to the same polarity.",
+    "Output (with capacitor): Smoothed DC with visible ripple, ripple frequency = 2 x supply frequency."
+  ],
+  "applications": [
+    "DC power supplies for electronic equipment.",
+    "Battery charging circuits.",
+    "AC to DC converters in adapters and chargers.",
+    "Input stage of regulated power supplies (before a voltage regulator)."
+  ],
+  "advantages": [
+    "No center-tapped transformer required, unlike a center-tap full-wave rectifier.",
+    "Better transformer utilization and efficiency.",
+    "Higher output voltage for the same transformer rating compared to center-tap rectifier.",
+    "Lower Peak Inverse Voltage (PIV) rating required per diode compared to center-tap rectifier."
+  ],
+  "disadvantages": [
+    "Requires four diodes instead of two, increasing cost and voltage drop.",
+    "Voltage drop is higher (two diode drops in series during each half-cycle) compared to center-tap rectifier.",
+    "More complex wiring than a half-wave or center-tap rectifier."
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "No output voltage at all.",
+      "likely_cause": "Open diode, blown fuse, broken transformer connection, or missing AC input group.",
+      "fix": "Check continuity of transformer secondary and all four diodes; verify AC input groups (g1-g4) are correctly wired."
+    },
+    {
+      "symptom": "Output shows only half-wave rectification (one hump missing per cycle).",
+      "likely_cause": "One diode is missing, open, or wrongly oriented, so one conduction path is broken.",
+      "fix": "Identify the affected diode from the missing group and reconnect it with correct polarity."
+    },
+    {
+      "symptom": "Excessive ripple in output.",
+      "likely_cause": "Filter capacitor missing, undersized, or load resistance too low (drawing too much current).",
+      "fix": "Verify the filter capacitor connection group and increase capacitance or load resistance if needed."
+    },
+    {
+      "symptom": "Output voltage much lower than expected.",
+      "likely_cause": "Extra loading, wrong meter range, or a diode conducting with reduced efficiency due to a poor connection.",
+      "fix": "Recheck all group connections, meter range, and diode orientation."
+    },
+    {
+      "symptom": "Capacitor heats up or shows damage.",
+      "likely_cause": "Reversed capacitor polarity.",
+      "fix": "Immediately power off, correct capacitor polarity as per its output rail group."
+    }
+  ],
+  "common_mistakes": [
+    "Connecting a diode with reversed polarity.",
+    "Swapping the AC input and DC output terminals of the bridge.",
+    "Connecting the filter capacitor with reversed polarity.",
+    "Using the multimeter in the wrong mode/range (AC instead of DC or wrong voltage range).",
+    "Loose or floating connections at shared junction nodes.",
+    "Forgetting to switch off supply before altering connections."
+  ],
+  "viva_questions": [
+    {
+      "question": "Why does a bridge rectifier not need a center-tapped transformer?",
+      "answer": "Because all four diodes together route both half cycles of current through the load in the same direction, so only two transformer secondary terminals (not three) are required."
+    },
+    {
+      "question": "What is the ripple frequency of a full-wave bridge rectifier for a 50Hz AC input?",
+      "answer": "100Hz, i.e., twice the input frequency, since both half cycles are rectified."
+    },
+    {
+      "question": "What happens if one diode in the bridge is removed or open?",
+      "answer": "The circuit degrades to half-wave rectification; only one half-cycle is rectified, average DC output drops and ripple increases significantly."
+    },
+    {
+      "question": "Why is the Peak Inverse Voltage (PIV) rating important for the diodes?",
+      "answer": "Each diode must withstand the peak reverse voltage during the non-conducting half-cycle without breaking down; for a bridge rectifier PIV = Vm (peak secondary voltage)."
+    },
+    {
+      "question": "What is the role of the filter capacitor?",
+      "answer": "It smooths the pulsating DC output by storing charge during the voltage peaks and releasing it during the dips, reducing ripple and giving a steadier DC output."
+    },
+    {
+      "question": "What is the formula for DC output voltage of a full-wave bridge rectifier without filter?",
+      "answer": "Vdc = (2 x Vm) / pi, where Vm is the peak value of the secondary AC voltage."
+    }
+  ],
+  "references": [
+    "Boylestad, R. L., Electronic Devices and Circuit Theory, Pearson Education.",
+    "Sedra, A. S. & Smith, K. C., Microelectronic Circuits, Oxford University Press.",
+    "Institution laboratory manual for Basic Electrical and Electronics Engineering."
+  ],
+  "correct_groups": {
+    "g1": [
+      [
+        "12",
+        "13",
+        "17",
+        "20",
+        "6"
+      ],
+      [
+        "12",
+        "13",
+        "17",
+        "19",
+        "6"
+      ]
+    ],
+    "g2": [
+      [
+        "18",
+        "21",
+        "4",
+        "8",
+        "9"
+      ],
+      [
+        "18",
+        "22",
+        "4",
+        "8",
+        "9"
+      ]
+    ],
+    "g3": [
+      [
+        "14",
+        "2",
+        "23",
+        "3",
+        "7"
+      ],
+      [
+        "14",
+        "2",
+        "25",
+        "3",
+        "7"
+      ]
+    ],
+    "g4": [
+      [
+        "1",
+        "10",
+        "11",
+        "24",
+        "5"
+      ],
+      [
+        "1",
+        "10",
+        "11",
+        "26",
+        "5"
+      ]
+    ],
+    "g5": [
+      [
+        "15",
+        "30"
+      ],
+      [
+        "15",
+        "31"
+      ],
+      [
+        "15",
+        "30",
+        "31"
+      ]
+    ],
+    "g6": [
+      [
+        "16",
+        "32"
+      ],
+      [
+        "16",
+        "33"
+      ],
+      [
+        "16",
+        "32",
+        "33"
+      ]
+    ],
+    "g7": [
+      [
+        "16",
+        "30"
+      ],
+      [
+        "16",
+        "31"
+      ]
+    ],
+    "g8": [
+      [
+        "15",
+        "32"
+      ],
+      [
+        "15",
+        "33"
+      ]
+    ]
+  },
+  "group_metadata": {
+    "g1": {
+      "component_name": "Diode D1 branch (AC input + bridge junction)",
+      "category": "diode",
+      "purpose": "Connects the transformer secondary AC terminal through Diode D1 into the bridge, forming one arm of the rectifier that conducts during the positive half-cycle along with D3.",
+      "expected_nodes": [
+        "12",
+        "13",
+        "17",
+        "20",
+        "6"
+      ],
+      "description": "This group wires the transformer secondary tap through D1's anode/cathode path into the shared bridge junction. It is one of the two diagonal paths that must be intact for full-wave rectification.",
+      "effect_if_missing": "Without this connection, D1's conduction path is broken. The circuit loses rectification for the half-cycle that depends on D1, so the output degrades to half-wave rectification with a missing lobe and roughly half the expected average DC voltage.",
+      "effect_if_wrong": "If wired with reversed polarity or to the wrong node, D1 may never conduct, may short part of the bridge, or may cause excessive current during one half-cycle, risking diode damage.",
+      "next_step": "Verify D1's orientation (band/cathode marking) and confirm nodes 12, 13, 17, 6, and 19/20 are connected exactly as per the wiring table."
+    },
+    "g2": {
+      "component_name": "Diode D2 branch (AC input + bridge junction)",
+      "category": "diode",
+      "purpose": "Connects the other transformer secondary terminal through Diode D2 into the bridge, forming the arm that conducts along with D4 during the negative half-cycle.",
+      "expected_nodes": [
+        "18",
+        "21",
+        "4",
+        "8",
+        "9"
+      ],
+      "description": "This group forms D2's conduction path, the counterpart to D1 for the opposite half-cycle of the AC input.",
+      "effect_if_missing": "D2's path being open means the negative half-cycle current cannot be routed through the load via D2/D4, again resulting in half-wave-like output and a missing lobe on the CRO.",
+      "effect_if_wrong": "Reversed or misplaced D2 can block conduction entirely for that half cycle or cause a short across the transformer secondary during conduction.",
+      "next_step": "Check D2 orientation and confirm nodes 18, 4, 8, 9, and 21/22 match the wiring table."
+    },
+    "g3": {
+      "component_name": "Diode D3 branch (bridge junction + return path)",
+      "category": "diode",
+      "purpose": "Completes the return path to the transformer for the diagonal pair D1-D3, active during the positive half-cycle.",
+      "expected_nodes": [
+        "14",
+        "2",
+        "23",
+        "3",
+        "7"
+      ],
+      "description": "D3 works together with D1: while D1 brings current into the load side, D3 returns it to the transformer, completing the loop for that half-cycle.",
+      "effect_if_missing": "If D3's path is missing, even though D1 is connected, current has no return path during that half-cycle, so effectively no current flows for that half-cycle -- the output again drops to half-wave-like behavior.",
+      "effect_if_wrong": "A wrongly connected D3 can cause the D1-D3 loop to short or fail to conduct, and may stress D1 with unexpected reverse voltage.",
+      "next_step": "Verify D3 orientation and confirm nodes 14, 2, 3, 7, and 23/25 are correctly wired."
+    },
+    "g4": {
+      "component_name": "Diode D4 branch (bridge junction + return path)",
+      "category": "diode",
+      "purpose": "Completes the return path to the transformer for the diagonal pair D2-D4, active during the negative half-cycle.",
+      "expected_nodes": [
+        "1",
+        "10",
+        "11",
+        "24",
+        "5"
+      ],
+      "description": "D4 works together with D2, completing the second diagonal conduction loop of the bridge.",
+      "effect_if_missing": "Without this group, the D2-D4 loop cannot complete, so the negative half-cycle contributes no current to the load, again producing a half-wave-like, lower-average output.",
+      "effect_if_wrong": "Wrong polarity or node on D4 can short the D2-D4 loop or prevent conduction, similar in effect to a missing connection but with added risk of excess current.",
+      "next_step": "Check D4 orientation and confirm nodes 1, 10, 11, 5, and 24/26 are correctly wired."
+    },
+    "g5": {
+      "component_name": "DC Output Positive Rail to Multimeter (+)",
+      "category": "measurement",
+      "purpose": "Connects the rectifier's DC positive output terminal (node 15) to the multimeter's positive probe point, allowing the output DC voltage to be measured.",
+      "expected_nodes": [
+        "15",
+        "30",
+        "31"
+      ],
+      "description": "Node 15 is the positive DC output rail after the bridge (and filter capacitor, if connected). Nodes 30/31 are equivalent redundant terminal points for the multimeter's positive lead.",
+      "effect_if_missing": "The multimeter will show no reading or an unstable/floating reading, since its positive probe is not actually connected to the output rail.",
+      "effect_if_wrong": "Connecting to the wrong node can give a false or zero voltage reading, or connect the meter across the wrong part of the circuit, leading to a misleading conclusion about circuit health.",
+      "next_step": "Confirm node 15 is the true DC+ output and that the multimeter positive lead is connected to node 30 or 31."
+    },
+    "g6": {
+      "component_name": "DC Output Negative Rail / Ground to Multimeter (-)",
+      "category": "measurement",
+      "purpose": "Connects the rectifier's DC negative/ground output terminal (node 16) to the multimeter's negative probe point.",
+      "expected_nodes": [
+        "16",
+        "32",
+        "33"
+      ],
+      "description": "Node 16 is the negative DC output rail / circuit ground. Nodes 32/33 are equivalent redundant terminal points for the multimeter's negative lead.",
+      "effect_if_missing": "No complete measurement loop exists, so the multimeter cannot give a valid DC voltage reading.",
+      "effect_if_wrong": "Measuring from the wrong reference point can produce an incorrect or noisy voltage reading and make it look like the rectifier is faulty when it may not be.",
+      "next_step": "Confirm node 16 is the true DC- / ground rail and that the multimeter negative lead is connected to node 32 or 33."
+    },
+    "g7": {
+      "component_name": "CRO Probe Ground Reference to DC Negative Rail",
+      "category": "measurement",
+      "purpose": "References the CRO probe ground clip to the DC negative rail (node 16) using the shared multimeter-positive-lead terminal points (30/31), so the ripple waveform can be observed correctly.",
+      "expected_nodes": [
+        "16",
+        "30"
+      ],
+      "description": "This alternate group lets the CRO's ground reference share a terminal point with the multimeter connection block, enabling simultaneous voltage measurement and waveform observation.",
+      "effect_if_missing": "The CRO trace may float, appear noisy, or show an incorrect/inverted waveform because it lacks a stable ground reference to the circuit.",
+      "effect_if_wrong": "An incorrect ground reference can make the ripple waveform appear distorted or can inject noise into the measurement.",
+      "next_step": "Confirm the CRO ground clip is connected to node 16 via terminal point 30 or 31."
+    },
+    "g8": {
+      "component_name": "CRO Probe Signal to DC Positive Rail",
+      "category": "measurement",
+      "purpose": "Connects the CRO signal probe tip to the DC positive output rail (node 15) via the shared multimeter-negative-lead terminal points (32/33), to display the rectified/filtered waveform.",
+      "expected_nodes": [
+        "15",
+        "32"
+      ],
+      "description": "This alternate group lets the CRO probe tip pick up the output DC signal (with ripple) from the positive rail for waveform display.",
+      "effect_if_missing": "No waveform will be visible on the CRO, or the trace will remain flat at zero.",
+      "effect_if_wrong": "Probing the wrong node can show an unrelated or distorted waveform, leading to incorrect conclusions about ripple or rectification quality.",
+      "next_step": "Confirm the CRO probe tip is connected to node 15 via terminal point 32 or 33."
+    }
+  },
+  "_node_map_note": "_node_map_note (superset of earlier note): This node_map was reverse-engineered purely from which node numbers co-occur inside correct_groups -- no wiring diagram, schematic, or trainer manual was provided, so name/component/terminal labels are a best-effort inference, not a confirmed fact. VERIFY every entry against your real trainer board before using it in a demo, a viva answer, or frontend socket-highlighting. The x/y fields are intentionally null: no trainer board image has been provided, so real pixel coordinates cannot be estimated yet. Fill them in either by uploading the trainer board image for visual estimation, or by calibrating each socket manually against your actual image asset. image_pin remains a placeholder equal to the node id until real coordinates are supplied.",
+  "node_map": {
+    "1": {
+      "name": "Diode D4 Anode",
+      "component": "D4",
+      "terminal": "Anode",
+      "image_pin": 1,
+      "x": null,
+      "y": null
+    },
+    "2": {
+      "name": "Transformer Secondary Terminal A (Return Tap)",
+      "component": "Transformer",
+      "terminal": "Secondary A (return)",
+      "image_pin": 2,
+      "x": null,
+      "y": null
+    },
+    "3": {
+      "name": "Diode D3 Cathode",
+      "component": "D3",
+      "terminal": "Cathode",
+      "image_pin": 3,
+      "x": null,
+      "y": null
+    },
+    "4": {
+      "name": "Diode D2 Anode",
+      "component": "D2",
+      "terminal": "Anode",
+      "image_pin": 4,
+      "x": null,
+      "y": null
+    },
+    "5": {
+      "name": "DC Negative (-) Bridge Junction",
+      "component": "Bridge",
+      "terminal": "DC-",
+      "image_pin": 5,
+      "x": null,
+      "y": null
+    },
+    "6": {
+      "name": "DC Positive (+) Bridge Junction",
+      "component": "Bridge",
+      "terminal": "DC+",
+      "image_pin": 6,
+      "x": null,
+      "y": null
+    },
+    "7": {
+      "name": "DC Negative (-) Bridge Junction (2nd terminal block, same net as Node 5)",
+      "component": "Bridge",
+      "terminal": "DC-",
+      "image_pin": 7,
+      "x": null,
+      "y": null
+    },
+    "8": {
+      "name": "Diode D2 Cathode",
+      "component": "D2",
+      "terminal": "Cathode",
+      "image_pin": 8,
+      "x": null,
+      "y": null
+    },
+    "9": {
+      "name": "DC Positive (+) Bridge Junction (2nd terminal block, same net as Node 6)",
+      "component": "Bridge",
+      "terminal": "DC+",
+      "image_pin": 9,
+      "x": null,
+      "y": null
+    },
+    "10": {
+      "name": "Transformer Secondary Terminal B (Return Tap)",
+      "component": "Transformer",
+      "terminal": "Secondary B (return)",
+      "image_pin": 10,
+      "x": null,
+      "y": null
+    },
+    "11": {
+      "name": "Diode D4 Cathode",
+      "component": "D4",
+      "terminal": "Cathode",
+      "image_pin": 11,
+      "x": null,
+      "y": null
+    },
+    "12": {
+      "name": "Transformer Secondary Terminal A (AC Input Tap)",
+      "component": "Transformer",
+      "terminal": "Secondary A (AC in)",
+      "image_pin": 12,
+      "x": null,
+      "y": null
+    },
+    "13": {
+      "name": "Diode D1 Anode",
+      "component": "D1",
+      "terminal": "Anode",
+      "image_pin": 13,
+      "x": null,
+      "y": null
+    },
+    "14": {
+      "name": "Diode D3 Anode",
+      "component": "D3",
+      "terminal": "Anode",
+      "image_pin": 14,
+      "x": null,
+      "y": null
+    },
+    "15": {
+      "name": "DC Output Positive Terminal (+Vdc)",
+      "component": "Output",
+      "terminal": "DC+ Out",
+      "image_pin": 15,
+      "x": null,
+      "y": null
+    },
+    "16": {
+      "name": "DC Output Negative Terminal / Ground (-Vdc / GND)",
+      "component": "Output",
+      "terminal": "DC- Out / GND",
+      "image_pin": 16,
+      "x": null,
+      "y": null
+    },
+    "17": {
+      "name": "Diode D1 Cathode",
+      "component": "D1",
+      "terminal": "Cathode",
+      "image_pin": 17,
+      "x": null,
+      "y": null
+    },
+    "18": {
+      "name": "Transformer Secondary Terminal B (AC Input Tap)",
+      "component": "Transformer",
+      "terminal": "Secondary B (AC in)",
+      "image_pin": 18,
+      "x": null,
+      "y": null
+    },
+    "19": {
+      "name": "DC Positive (+) Bridge Junction - redundant terminal block (alt of Node 6/9, used with G1)",
+      "component": "Bridge",
+      "terminal": "DC+",
+      "image_pin": 19,
+      "x": null,
+      "y": null
+    },
+    "20": {
+      "name": "DC Positive (+) Bridge Junction - redundant terminal block (alt of Node 6/9, used with G1)",
+      "component": "Bridge",
+      "terminal": "DC+",
+      "image_pin": 20,
+      "x": null,
+      "y": null
+    },
+    "21": {
+      "name": "DC Positive (+) Bridge Junction - redundant terminal block (alt of Node 6/9, used with G2)",
+      "component": "Bridge",
+      "terminal": "DC+",
+      "image_pin": 21,
+      "x": null,
+      "y": null
+    },
+    "22": {
+      "name": "DC Positive (+) Bridge Junction - redundant terminal block (alt of Node 6/9, used with G2)",
+      "component": "Bridge",
+      "terminal": "DC+",
+      "image_pin": 22,
+      "x": null,
+      "y": null
+    },
+    "23": {
+      "name": "DC Negative (-) Bridge Junction - redundant terminal block (alt of Node 5/7, used with G3)",
+      "component": "Bridge",
+      "terminal": "DC-",
+      "image_pin": 23,
+      "x": null,
+      "y": null
+    },
+    "24": {
+      "name": "DC Negative (-) Bridge Junction - redundant terminal block (alt of Node 5/7, used with G4)",
+      "component": "Bridge",
+      "terminal": "DC-",
+      "image_pin": 24,
+      "x": null,
+      "y": null
+    },
+    "25": {
+      "name": "DC Negative (-) Bridge Junction - redundant terminal block (alt of Node 5/7, used with G3)",
+      "component": "Bridge",
+      "terminal": "DC-",
+      "image_pin": 25,
+      "x": null,
+      "y": null
+    },
+    "26": {
+      "name": "DC Negative (-) Bridge Junction - redundant terminal block (alt of Node 5/7, used with G4)",
+      "component": "Bridge",
+      "terminal": "DC-",
+      "image_pin": 26,
+      "x": null,
+      "y": null
+    },
+    "27": {
+      "name": "Spare / Unused Terminal (not part of any active group in this experiment)",
+      "component": "Spare",
+      "terminal": "N/A",
+      "image_pin": 27,
+      "x": null,
+      "y": null
+    },
+    "28": {
+      "name": "Spare / Unused Terminal (not part of any active group in this experiment)",
+      "component": "Spare",
+      "terminal": "N/A",
+      "image_pin": 28,
+      "x": null,
+      "y": null
+    },
+    "29": {
+      "name": "Spare / Unused Terminal (not part of any active group in this experiment)",
+      "component": "Spare",
+      "terminal": "N/A",
+      "image_pin": 29,
+      "x": null,
+      "y": null
+    },
+    "30": {
+      "name": "Multimeter Positive (+) Probe Terminal (redundant block A)",
+      "component": "Multimeter",
+      "terminal": "V+",
+      "image_pin": 30,
+      "x": null,
+      "y": null
+    },
+    "31": {
+      "name": "Multimeter Positive (+) Probe Terminal (redundant block B)",
+      "component": "Multimeter",
+      "terminal": "V+",
+      "image_pin": 31,
+      "x": null,
+      "y": null
+    },
+    "32": {
+      "name": "Multimeter Negative (-) Probe / CRO Ground Terminal (redundant block A)",
+      "component": "Multimeter",
+      "terminal": "V- / CRO GND",
+      "image_pin": 32,
+      "x": null,
+      "y": null
+    },
+    "33": {
+      "name": "Multimeter Negative (-) Probe / CRO Ground Terminal (redundant block B)",
+      "component": "Multimeter",
+      "terminal": "V- / CRO GND",
+      "image_pin": 33,
+      "x": null,
+      "y": null
+    }
+  },
+  "component_map": {
+    "D1": {
+      "display_name": "Diode D1",
+      "nodes": [
+        "13",
+        "17"
+      ],
+      "anode_node": "13",
+      "cathode_node": "17",
+      "associated_groups": [
+        "g1"
+      ],
+      "description": "Conducts during the half-cycle where Transformer Secondary A is positive, forming one leg of the D1-D3 conduction pair."
+    },
+    "D2": {
+      "display_name": "Diode D2",
+      "nodes": [
+        "4",
+        "8"
+      ],
+      "anode_node": "4",
+      "cathode_node": "8",
+      "associated_groups": [
+        "g2"
+      ],
+      "description": "Conducts during the half-cycle where Transformer Secondary B is positive, forming one leg of the D2-D4 conduction pair."
+    },
+    "D3": {
+      "display_name": "Diode D3",
+      "nodes": [
+        "14",
+        "3"
+      ],
+      "anode_node": "14",
+      "cathode_node": "3",
+      "associated_groups": [
+        "g3"
+      ],
+      "description": "Completes the return path to Transformer Secondary A, working with D1 to conduct during the same half-cycle."
+    },
+    "D4": {
+      "display_name": "Diode D4",
+      "nodes": [
+        "1",
+        "11"
+      ],
+      "anode_node": "1",
+      "cathode_node": "11",
+      "associated_groups": [
+        "g4"
+      ],
+      "description": "Completes the return path to Transformer Secondary B, working with D2 to conduct during the same half-cycle."
+    },
+    "Transformer": {
+      "display_name": "Step-down Transformer",
+      "nodes": [
+        "2",
+        "10",
+        "12",
+        "18"
+      ],
+      "associated_groups": [
+        "g1",
+        "g2",
+        "g3",
+        "g4"
+      ],
+      "description": "Supplies the low-voltage AC input to the bridge via Secondary Terminals A and B (AC-input taps at nodes 12/18, return taps at nodes 2/10). Primary-side (mains) nodes are not exposed on this trainer's node list."
+    },
+    "Bridge_Junction_DC_Positive": {
+      "display_name": "Bridge DC+ Junction",
+      "nodes": [
+        "6",
+        "9",
+        "19",
+        "20",
+        "21",
+        "22"
+      ],
+      "associated_groups": [
+        "g1",
+        "g2"
+      ],
+      "description": "The common cathode junction of D1 and D2, forming the DC positive rail before the output terminal. Nodes 19/20/21/22 are redundant terminal blocks on the same electrical net."
+    },
+    "Bridge_Junction_DC_Negative": {
+      "display_name": "Bridge DC- Junction",
+      "nodes": [
+        "5",
+        "7",
+        "23",
+        "24",
+        "25",
+        "26"
+      ],
+      "associated_groups": [
+        "g3",
+        "g4"
+      ],
+      "description": "The common anode junction of D3 and D4, forming the DC negative rail before the output terminal. Nodes 23/24/25/26 are redundant terminal blocks on the same electrical net."
+    },
+    "Output_Terminals": {
+      "display_name": "DC Output Terminals",
+      "nodes": [
+        "15",
+        "16"
+      ],
+      "positive_node": "15",
+      "negative_node": "16",
+      "associated_groups": [
+        "g5",
+        "g6",
+        "g7",
+        "g8"
+      ],
+      "description": "Final DC output points, +Vdc at node 15 and -Vdc/GND at node 16, where the filter capacitor and load resistor are physically fixed on this trainer (not represented as separate switchable groups)."
+    },
+    "Multimeter": {
+      "display_name": "Digital Multimeter",
+      "nodes": [
+        "30",
+        "31",
+        "32",
+        "33"
+      ],
+      "positive_probe_nodes": [
+        "30",
+        "31"
+      ],
+      "negative_probe_nodes": [
+        "32",
+        "33"
+      ],
+      "associated_groups": [
+        "g5",
+        "g6"
+      ],
+      "description": "Measures DC output voltage across nodes 15/16 via the redundant probe terminal blocks 30/31 (+) and 32/33 (-)."
+    },
+    "CRO": {
+      "display_name": "Oscilloscope (CRO)",
+      "nodes": [
+        "15",
+        "16",
+        "30",
+        "31",
+        "32",
+        "33"
+      ],
+      "associated_groups": [
+        "g7",
+        "g8"
+      ],
+      "description": "Displays the rectified/filtered output waveform, sharing the multimeter's terminal blocks: ground reference via 30/31 (group g7) and signal probe via 32/33 (group g8)."
+    }
+  }
+}

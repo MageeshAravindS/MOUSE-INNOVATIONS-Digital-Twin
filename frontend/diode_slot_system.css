@@ -1,0 +1,205 @@
+/* ======================================================================
+   Diode Drag-and-Drop Placement System — styles
+   Namespaced under "dps-" so it cannot collide with existing project CSS.
+   ====================================================================== */
+
+.dps-wrap{
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.dps-title{
+  font-weight: 700;
+  font-size: 15px;
+  color: #0B2545;
+  margin-bottom: 4px;
+}
+
+.dps-subtitle{
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.dps-toolbar{
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.dps-btn{
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #E6FAF8;
+  color: #0E7C7B;
+  transition: background .15s ease, transform .1s ease;
+}
+.dps-btn:hover{ background:#c9f3ef; }
+.dps-btn:active{ transform: scale(.97); }
+
+.dps-btn.dps-active{
+  background: #0E7C7B;
+  color: #fff;
+}
+
+.dps-btn.dps-reset{
+  background:#FEF2F2;
+  color:#B91C1C;
+}
+.dps-btn.dps-reset:hover{ background:#fde2e2; }
+
+.dps-layout{
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* ---------------- Board overlay (sits on top of the real board image) ---------------- */
+
+.dps-board-overlay{
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* only the diode children re-enable pointer events */
+  z-index: 5;
+  border-radius: inherit;
+  transition: box-shadow .15s ease, background .15s ease;
+}
+
+/* Whole board is now the free-placement drop zone — no fixed slots.
+   These two classes give live feedback while a diode is being dragged. */
+.dps-board-overlay.dps-board-over{
+  background: rgba(34,211,238,.06);
+  box-shadow: inset 0 0 0 3px rgba(34,211,238,.45);
+}
+
+.dps-board-overlay.dps-board-reject{
+  background: rgba(248,113,113,.05);
+  box-shadow: inset 0 0 0 3px rgba(248,113,113,.35);
+}
+
+/* ---------------- Toolbox ---------------- */
+
+.dps-toolbox{
+  width: 100%;
+  max-width: 300px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px #0001;
+  padding: 14px;
+}
+
+.dps-toolbox-title{
+  font-size: 12px;
+  font-weight: 700;
+  color: #0B2545;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.dps-toolbox-items{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dps-toolbox-empty{
+  font-size: 11px;
+  color: #94a3b8;
+  padding: 10px 0;
+}
+
+/* ---------------- Diode component (shared by toolbox + board) ---------------- */
+
+.dps-diode{
+  width: 68px;
+  height: 68px;
+  border-radius: 10px;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  position: relative;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,.35));
+  pointer-events: auto;
+}
+
+.dps-diode img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  pointer-events: none; /* dragging is handled on the wrapping .dps-diode div */
+  -webkit-user-drag: none;
+}
+
+.dps-diode.dps-placed{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 15%;
+  height: 15%;
+  min-width: 52px;
+  min-height: 52px;
+  cursor: default;
+  z-index: 3;
+  transition: left .18s ease, top .18s ease, transform .18s ease;
+}
+
+.dps-diode.dps-placed.dps-movable{
+  cursor: grab;
+}
+
+.dps-rotate-btn{
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: #0E7C7B;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px #0004;
+  pointer-events: auto;
+  z-index: 4;
+}
+.dps-rotate-btn:hover{ background:#0a5f5e; }
+.dps-rotate-btn:active{ transform: scale(.92); }
+
+.dps-diode.dps-dragging{
+  cursor: grabbing;
+  opacity: .9;
+  z-index: 999;
+  transition: none !important;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,.45));
+}
+
+.dps-ghost{
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: .92;
+}
+
+.dps-status{
+  margin-top: 10px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.dps-status b{ color:#0B2545; }

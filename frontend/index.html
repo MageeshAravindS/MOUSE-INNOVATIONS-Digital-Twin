@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mouse Innovations · EduNexus Lab</title>
+
+    <!-- FAVICON SUITE (Official Mouse Innovations Robot Brand Icon) -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=mouse_innovations_v4">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=mouse_innovations_v4">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=mouse_innovations_v4">
+    <link rel="shortcut icon" href="favicon.ico?v=mouse_innovations_v4">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=mouse_innovations_v4">
+    <meta name="theme-color" content="#1e40af">
+
+    <!-- GOOGLE FONTS (Caelestia Typography) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- ICONS -->
+    <link 
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
+    <link 
+    rel="stylesheet" 
+    href="style.css?v=caelestia_v12_ui_fix">
+
+    <!-- Diode drag-and-drop placement system (additive, self-contained) -->
+    <link
+    rel="stylesheet"
+    href="diode_slot_system.css?v=caelestia_v6_refined">
+<!-- PDF REPORT GENERATOR -->
+<script 
+src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+</script>
+
+
+    <!-- THEME PRELOADER (Instant Daybreak / Cosmic Mode sync) -->
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('edunexus_theme') || 'dark';
+        if (savedTheme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.classList.add('light-theme');
+          if (document.body) document.body.classList.add('light-theme');
+          else window.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
+        }
+      })();
+    </script>
+
+    <!-- BACKEND API -->
+    <script>
+      (function() {
+        const customApi = localStorage.getItem("edunexus_api_base");
+        if (customApi) {
+          window.EDUNEXUS_API_BASE = customApi.replace(/\/+$/, "");
+        } else if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+          window.EDUNEXUS_API_BASE = window.location.protocol + "//" + window.location.hostname + ":8123";
+        } else {
+          window.EDUNEXUS_API_BASE = window.location.origin;
+        }
+      })();
+    </script>
+    <!-- AI Tutor Engine (loaded early so toggleAI is available immediately) -->
+    <script src="ai.js?v=caelestia_v9_clean"></script>
+</head>
+
+
+<body>
+    <!-- =========================
+         MAIN WEBSITE ROOT
+    ========================== -->
+    <div id="app-root">
+        <div id="root"></div>
+        <div id="toast"></div>
+
+        <!-- =====================
+             AI PRACTICAL TEACHER
+        ====================== -->
+        <div id="aiChat">
+            <button id="aiOpen" onclick="toggleAI()" aria-label="Open AI Teacher">
+                <span class="ai-btn-beacon"></span>
+                <i class="ti ti-sparkles" style="font-size: 18px; margin-right: 6px;"></i>
+                <span>AI Teacher</span>
+            </button>
+
+            <div id="aiPanel">
+                <div class="ai-panel-header">
+                    <div class="ai-header-drag">
+                        <div class="ai-header-beacon"></div>
+                        <h3><i class="ti ti-cpu" style="font-size: 16px;"></i> EduNexus AI Teacher</h3>
+                    </div>
+                    <div class="ai-header-provider">
+                        <select id="aiProviderSelect" class="ai-provider-select" onchange="onAIProviderChange(this.value)" title="Switch AI Provider">
+                            <option value="ollama">● Local Qwen3:4B (RTX 2050)</option>
+                            <option value="api">⚡ Cloud API (Groq)</option>
+                        </select>
+                    </div>
+                    <div class="ai-header-tools">
+                        <button class="ai-tool-btn" id="aiDebugToggleBtn" onclick="toggleAIDebugDrawer()" title="Developer Diagnostics" aria-label="Debug">
+                            <i class="ti ti-terminal-2"></i>
+                        </button>
+                        <button class="ai-tool-btn" onclick="toggleAI()" title="Minimize" aria-label="Minimize AI panel">
+                            <i class="ti ti-minus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hardware & Diagnostics Status Bar -->
+                <div id="aiHardwareStatus" class="ai-hardware-status">
+                    <span class="ai-status-indicator online" id="aiStatusDot"></span>
+                    <span class="ai-status-text" id="aiStatusText">Connecting...</span>
+                    <span class="ai-status-badge" id="aiStatusBadge">RTX 2050</span>
+                </div>
+
+                <!-- Real-time Circuit Guidance Banner -->
+                <div id="aiCircuitGuidance" class="ai-circuit-guidance" style="display: none;">
+                    <div class="ai-guidance-header">
+                        <span class="ai-guidance-badge"><i class="ti ti-bolt"></i> Real-time Circuit Assistant</span>
+                        <button class="ai-guidance-close" onclick="dismissCircuitGuidance()" title="Dismiss"><i class="ti ti-x"></i></button>
+                    </div>
+                    <div id="aiGuidanceContent" class="ai-guidance-content"></div>
+                </div>
+
+                <div id="aiMessages">
+                    <div class="ai-msg ai-msg-welcome">
+                        <div class="ai-welcome-badge">
+                            <i class="ti ti-robot"></i>
+                        </div>
+                        <div class="ai-welcome-title">Virtual Lab Instructor</div>
+                        <p class="ai-welcome-sub">I'm connected to your live digital twin. Ask me anything about your experiment:</p>
+                        <div class="ai-quick-prompts">
+                            <button class="ai-quick-chip" onclick="askQuickPrompt('Explain the aim and theory of this experiment')"><i class="ti ti-bolt"></i> Aim & Theory</button>
+                            <button class="ai-quick-chip" onclick="askQuickPrompt('Analyze my current circuit wiring and check for mistakes')"><i class="ti ti-plug"></i> Check Wiring</button>
+                            <button class="ai-quick-chip" onclick="askQuickPrompt('What output waveform should I expect on the CRO?')"><i class="ti ti-chart-line"></i> Waveforms</button>
+                            <button class="ai-quick-chip" onclick="askQuickPrompt('Give me a viva question about this circuit')"><i class="ti ti-school"></i> Viva Exam</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Developer Diagnostics Drawer -->
+                <div id="aiDebugDrawer" class="ai-debug-drawer" style="display: none;">
+                    <div class="ai-debug-header">
+                        <span><i class="ti ti-bug"></i> Diagnostics</span>
+                        <span id="aiDebugLatency" class="ai-debug-latency">-</span>
+                    </div>
+                    <div class="ai-debug-body">
+                        <div class="ai-debug-row"><span>Provider:</span> <strong id="aiDebugProvider">ollama</strong> &nbsp;|&nbsp; <span>Model:</span> <strong id="aiDebugModel">qwen3:4b</strong></div>
+                        <div class="ai-debug-row"><span>Tokens:</span> <span id="aiDebugTokens">-</span> &nbsp;|&nbsp; <span>Cached:</span> <span id="aiDebugCached">No</span></div>
+                        <div class="ai-debug-row" id="aiDebugThinkingRow" style="display: none;">
+                            <details>
+                                <summary style="cursor: pointer; color: #818cf8; font-size: 11px;">Qwen3 Reasoning Trace (<span id="aiDebugThinkChars">0</span> chars)</summary>
+                                <pre id="aiDebugThinkingText" class="ai-debug-pre"></pre>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-input-wrapper">
+                    <div class="ai-input-capsule">
+                        <input 
+                            id="aiInput" 
+                            placeholder="Ask your experiment doubt..." 
+                            autocomplete="off"
+                            onkeydown="if(event.key==='Enter')sendAI()">
+                        <button id="aiSendBtn" class="ai-send-btn" onclick="sendAI()" aria-label="Send query" title="Send message">
+                            <i class="ti ti-send"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    
+
+    <!-- =========================
+         JAVASCRIPT FILES
+    ========================== -->
+
+
+<!-- Live Classroom Proctor & Circuit Synchronization Engine -->
+<script src="live_classroom.js?v=caelestia_v14_live_sync_fixed"></script>
+
+<!-- Assessment Engine -->
+<script src="assessment.js?v=caelestia_v14_live_sync_fixed"></script>
+
+<!-- PDF Report Generator -->
+<script src="report.js?v=caelestia_v6_refined"></script>
+
+<!-- Experiment Trainer -->
+<script src="experiment.js?v=caelestia_v14_live_sync_fixed"></script>
+<script src="diode_slot_system.js?v=caelestia_v6_refined"></script>
+
+<!-- Announcements -->
+<script src="announcements.js?v=caelestia_v6_refined"></script>
+
+<!-- Supabase -->
+<script type="module" src="supabase.js?v=caelestia_v6_refined"></script>
+<script type="module" src="supabase-auth.js?v=caelestia_v6_refined"></script>
+
+
+<!-- Main Application -->
+<script type="module" src="app.js?v=caelestia_v14_live_sync_fixed"></script>
+
+</body>
+</html>

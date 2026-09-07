@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+passlib[bcrypt]
+bcrypt
+python-jose
+python-multipart
+pydantic[email]
+python-dotenv
+requests
+groq
+reportlab
+Pillow
+pyserial
+psycopg2-binary

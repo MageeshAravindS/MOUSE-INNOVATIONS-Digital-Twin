@@ -1,0 +1,302 @@
+{
+  "experiment": "Power Converter Kit",
+  "description": "Power Converter Practical - dual bridge rectifier stage feeding a switching/PWM regulated output stage",
+  "_meta_note": "Node numbers below are taken directly from frontend/assets/socket_positions_power_converter.json. Group wiring (correct_groups/group_metadata) reflects the labelled board layout (INPUT AC SUPPLY, two diamond diode bridges, SWITCHING PULSE header, and 9V/12V/+5V/GND/+12V output rail) visible on the trainer silkscreen. VERIFY expected node groupings against your actual trainer manual before treating this as ground truth, and edit any group_metadata entry that doesn't match your hardware.",
+  "aim": "To construct the Power Converter circuit (dual bridge rectifier stage plus switching regulator stage), observe the rectified and regulated DC output, and verify the output rails against the expected voltages.",
+  "objective": [
+    "Understand how two diode-bridge rectifier stacks convert the AC input into pulsating DC.",
+    "Understand how the switching/PWM stage regulates the rectified DC into stable output rails.",
+    "Measure and verify the 9V, 12V, +5V and +12V output rails against expected values.",
+    "Identify the effect of a missing or wrongly connected diode/switching-pulse link on the output."
+  ],
+  "theory": "The Power Converter board takes AC input and rectifies it using two full-wave diode bridge stacks (each built from four diodes arranged in a diamond configuration), producing pulsating DC. This pulsating DC feeds a switching stage, controlled via the SWITCHING PULSE header, which chops and regulates the rectified DC into stable low-voltage output rails (9V, 12V, +5V, +12V) referenced to a common GND. The switching stage improves efficiency over a purely linear regulator by rapidly switching the pass element on and off and filtering the result, rather than dissipating the voltage difference as heat.",
+  "working_principle": "AC input enters at the INPUT AC SUPPLY terminals and is fed into both diode bridge stacks in parallel/series as wired by the student. Each bridge converts its half of the AC waveform into pulsating DC using the same diagonal-pair diode conduction principle as a standard bridge rectifier. The combined rectified DC is then routed to the SWITCHING PULSE stage, which uses a control pulse to regulate the output into the 9V/12V/+5V/+12V rails. GND provides the common return path for all measurements. A missing or wrong diode connection in either bridge breaks that bridge's rectification path, reducing the DC feeding the switching stage and degrading or destabilizing the regulated output rails.",
+  "apparatus": [
+    "Power Converter trainer kit / board",
+    "AC input supply (as specified by the board rating)",
+    "8 x diodes forming the two bridge stacks (4 per bridge)",
+    "Switching/PWM control section (onboard)",
+    "Digital Multimeter",
+    "Dual channel CRO / Oscilloscope with probes",
+    "Connecting wires / patch cords"
+  ],
+  "components": [
+    {
+      "name": "AC Input Supply",
+      "role": "Supplies the AC input to both diode bridge stacks."
+    },
+    {
+      "name": "Bridge Stack A (top)",
+      "role": "First full-wave diode bridge; rectifies AC into pulsating DC."
+    },
+    {
+      "name": "Bridge Stack B (bottom)",
+      "role": "Second full-wave diode bridge; rectifies AC into pulsating DC."
+    },
+    {
+      "name": "Switching Pulse Stage",
+      "role": "Regulates the combined rectified DC into stable output rails using a switching control pulse."
+    },
+    {
+      "name": "Output Rails (9V / 12V / +5V / +12V / GND)",
+      "role": "Provide the regulated DC outputs and common ground reference for measurement."
+    }
+  ],
+  "procedure": [
+    "Switch off the AC mains supply before making or changing any connections.",
+    "Wire the AC input terminals to the first diode bridge stack, following the diode orientation markings.",
+    "Wire the AC input terminals to the second diode bridge stack, following the diode orientation markings.",
+    "Connect the switching pulse header as per the trainer wiring table.",
+    "Connect the multimeter/CRO to the desired output rail (9V, 12V, +5V, +12V) and GND.",
+    "Switch on the AC supply and observe/measure the output waveform and voltage.",
+    "Repeat for each output rail as required by the practical."
+  ],
+  "precautions": [
+    "Always switch off the AC mains supply before making or changing any connections.",
+    "Ensure diodes in both bridge stacks are connected with correct polarity.",
+    "Do not exceed the rated voltage/current of the diodes or switching stage.",
+    "Use an isolation transformer and avoid direct contact with mains-side wiring.",
+    "Set the multimeter to the correct range (DC voltage) before measuring any output rail.",
+    "Double check all connections against the wiring/group table before switching on the supply.",
+    "Keep CRO probes properly grounded and set to the correct volts/division before observing waveforms."
+  ],
+  "expected_output": "Regulated DC present on the 9V, 12V, +5V and +12V output rails referenced to GND, derived from the rectified and switched AC input.",
+  "expected_voltage": "Output rails should read close to their labelled nominal values (9V, 12V, +5V, +12V) at GND reference, subject to load and input supply tolerance.",
+  "expected_waveforms": [
+    "Input: Sinusoidal AC waveform at the AC input terminals.",
+    "Post-bridge (pre-switching): Full-wave rectified pulsating DC from each bridge stack.",
+    "Output rails: Smoothed/regulated DC with minimal ripple after the switching stage."
+  ],
+  "applications": [
+    "SMPS-based power supplies",
+    "Battery charging circuits",
+    "DC power rails for embedded/control electronics"
+  ],
+  "advantages": [
+    "Higher efficiency than a purely linear regulator due to the switching stage.",
+    "Provides multiple regulated output rails from a single AC input."
+  ],
+  "disadvantages": [
+    "More complex wiring than a single bridge rectifier.",
+    "Switching stage can introduce noise/ripple if not filtered correctly."
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "No output voltage on any rail.",
+      "likely_cause": "Open diode in a bridge stack, broken AC input connection, or missing switching pulse link.",
+      "fix": "Check continuity of the AC input path and both diode bridges; verify the switching pulse header connection."
+    },
+    {
+      "symptom": "One bridge stack shows only half-wave-like output.",
+      "likely_cause": "One diode in that bridge is missing, open, or wrongly oriented.",
+      "fix": "Identify the affected diode and reconnect it with correct polarity."
+    },
+    {
+      "symptom": "Output rail voltage much lower or unstable.",
+      "likely_cause": "Switching pulse stage not correctly wired, or excessive loading on that rail.",
+      "fix": "Recheck the switching pulse connection and the specific output rail wiring against the group table."
+    }
+  ],
+  "common_mistakes": [
+    "Reversing diode polarity in one of the bridge stacks.",
+    "Missing the switching pulse header connection.",
+    "Measuring an output rail without a proper GND reference."
+  ],
+  "viva_questions": [
+    {
+      "question": "Why does the Power Converter board use two diode bridge stacks instead of one?",
+      "reference_answer": "To rectify the AC input in parallel or provide separate rectified DC feeds for different sections of the switching stage, increasing current handling and rail flexibility."
+    },
+    {
+      "question": "What is the role of the switching pulse stage?",
+      "reference_answer": "It regulates the rectified DC into stable output rails by rapidly switching the pass element on and off, improving efficiency compared to a linear regulator."
+    },
+    {
+      "question": "What happens if a diode in one bridge stack is open?",
+      "reference_answer": "That bridge degrades to half-wave-like rectification, reducing the DC feeding the switching stage and potentially destabilizing the regulated output rails."
+    },
+    {
+      "question": "Why is GND used as the common reference for all output rail measurements?",
+      "reference_answer": "All regulated rails (9V, 12V, +5V, +12V) are referenced to the same ground, so a single common GND point ensures consistent, comparable voltage measurements."
+    }
+  ],
+  "references": [
+    "Power Converter trainer kit manual"
+  ],
+  "correct_groups": {
+    "g1": [
+      ["2", "13", "14", "6"],
+      ["2", "13", "14", "30"]
+    ],
+    "g2": [
+      ["3", "7", "8", "31"],
+      ["3", "7", "8", "4"]
+    ],
+    "g3": [
+      ["1", "6", "32", "11"],
+      ["1", "32", "11", "12"]
+    ],
+    "g4": [
+      ["4", "9", "10", "33"],
+      ["9", "33", "10", "5"]
+    ],
+    "g5": [
+      ["3", "30", "31"],
+      ["30", "31"]
+    ],
+    "g6": [
+      ["5", "32", "33"],
+      ["32", "33"]
+    ],
+    "g7": [
+      ["23", "24", "17", "18"]
+    ],
+    "g8": [
+      ["19", "20", "27", "28"]
+    ]
+  },
+  "group_metadata": {
+    "g1": {
+      "component_name": "Bridge Stack A - AC Input / Diode branch (top-left leg)",
+      "category": "diode",
+      "purpose": "Routes AC input through the first diode of Bridge Stack A into the top bridge junction.",
+      "expected_nodes": ["2", "13", "14", "6"],
+      "description": "Part of Bridge Stack A's rectification path from the AC input terminal into the top diamond bridge junction.",
+      "effect_if_missing": "Bridge Stack A loses part of its conduction path, degrading its rectified output for the corresponding half-cycle.",
+      "effect_if_wrong": "Reversed polarity on this leg can prevent conduction or risk excessive current during one half-cycle.",
+      "next_step": "Verify diode orientation on this leg and confirm nodes 2, 13, 14 and 6 are connected as per the wiring table."
+    },
+    "g2": {
+      "component_name": "Bridge Stack A - AC Input / Diode branch (top-right leg)",
+      "category": "diode",
+      "purpose": "Routes AC input through the second diode of Bridge Stack A into the top bridge junction.",
+      "expected_nodes": ["3", "7", "8", "31"],
+      "description": "Completing leg of Bridge Stack A's rectification path.",
+      "effect_if_missing": "Bridge Stack A loses part of its conduction path for the opposite half-cycle, reducing rectified output.",
+      "effect_if_wrong": "Reversed polarity on this leg can prevent conduction or risk diode damage.",
+      "next_step": "Verify diode orientation on this leg and confirm nodes 3, 7, 8 and 31 are connected as per the wiring table."
+    },
+    "g3": {
+      "component_name": "Bridge Stack B - Diode branch (bottom-left leg)",
+      "category": "diode",
+      "purpose": "Routes current through the first diode of Bridge Stack B into the bottom bridge junction.",
+      "expected_nodes": ["1", "6", "32", "11"],
+      "description": "Part of Bridge Stack B's rectification path.",
+      "effect_if_missing": "Bridge Stack B loses part of its conduction path, degrading its rectified output.",
+      "effect_if_wrong": "Reversed polarity on this leg can prevent conduction or risk diode damage.",
+      "next_step": "Verify diode orientation on this leg and confirm nodes 1, 6, 32 and 11 are connected as per the wiring table."
+    },
+    "g4": {
+      "component_name": "Bridge Stack B - Diode branch (bottom-right leg)",
+      "category": "diode",
+      "purpose": "Routes current through the second diode of Bridge Stack B into the bottom bridge junction.",
+      "expected_nodes": ["4", "9", "10", "33"],
+      "description": "Completing leg of Bridge Stack B's rectification path.",
+      "effect_if_missing": "Bridge Stack B loses part of its conduction path for the opposite half-cycle, reducing rectified output.",
+      "effect_if_wrong": "Reversed polarity on this leg can prevent conduction or risk diode damage.",
+      "next_step": "Verify diode orientation on this leg and confirm nodes 4, 9, 10 and 33 are connected as per the wiring table."
+    },
+    "g5": {
+      "component_name": "Bridge Stack A - Internal bridge junction link",
+      "category": "junction",
+      "purpose": "Connects the shared internal junction nodes of Bridge Stack A.",
+      "expected_nodes": ["3", "30", "31"],
+      "description": "Internal tie point joining the two halves of Bridge Stack A into a single rectifier bridge.",
+      "effect_if_missing": "Bridge Stack A cannot form a complete bridge, so no proper DC output is produced from this stack.",
+      "effect_if_wrong": "An incorrect junction link can short the AC input or disable rectification for this stack.",
+      "next_step": "Confirm nodes 3, 30 and 31 are correctly tied together per the wiring table."
+    },
+    "g6": {
+      "component_name": "Bridge Stack B - Internal bridge junction link",
+      "category": "junction",
+      "purpose": "Connects the shared internal junction nodes of Bridge Stack B.",
+      "expected_nodes": ["5", "32", "33"],
+      "description": "Internal tie point joining the two halves of Bridge Stack B into a single rectifier bridge.",
+      "effect_if_missing": "Bridge Stack B cannot form a complete bridge, so no proper DC output is produced from this stack.",
+      "effect_if_wrong": "An incorrect junction link can short the input or disable rectification for this stack.",
+      "next_step": "Confirm nodes 5, 32 and 33 are correctly tied together per the wiring table."
+    },
+    "g7": {
+      "component_name": "9V / 12V Output Rail Group",
+      "category": "output",
+      "purpose": "Connects the rectified DC output to the 9V and 12V labelled output terminals.",
+      "expected_nodes": ["23", "24", "17", "18"],
+      "description": "Output rail tie point for the lower-left 9V/12V terminal block.",
+      "effect_if_missing": "The 9V/12V rail will show no reading or an unstable/floating reading.",
+      "effect_if_wrong": "Miswiring this group can short the output or deliver the wrong voltage to the 9V/12V terminals.",
+      "next_step": "Confirm nodes 23, 24, 17 and 18 are wired to the 9V/12V output block as per the wiring table."
+    },
+    "g8": {
+      "component_name": "Switching Pulse / GND Output Rail Group",
+      "category": "output",
+      "purpose": "Connects the switching pulse output stage to the GND-referenced output terminals.",
+      "expected_nodes": ["19", "20", "27", "28"],
+      "description": "Ties the switching stage output to the GND-referenced terminal group used for measurement.",
+      "effect_if_missing": "The switching stage output cannot be measured correctly; readings may float or show zero.",
+      "effect_if_wrong": "Miswiring this group can short the switching output or give an incorrect reading.",
+      "next_step": "Confirm nodes 19, 20, 27 and 28 are wired as per the wiring table."
+    }
+  },
+  "_node_map_note": "Node names below are inferred from the board silkscreen (INPUT AC SUPPLY, two diode-diamond bridge stacks, SWITCHING PULSE header, and 9V/12V/+5V/GND/+12V output block) and the socket coordinate file. Verify against your actual trainer manual.",
+  "node_map": {
+    "1": {"name": "Bridge Stack B Diode Anode (left leg)", "component": "Bridge Stack B", "terminal": "Diode Anode", "image_pin": 1, "x": null, "y": null},
+    "2": {"name": "AC Input Supply Terminal A", "component": "AC Input Supply", "terminal": "Input A", "image_pin": 2, "x": null, "y": null},
+    "3": {"name": "Bridge Stack A Internal Junction Top", "component": "Bridge Stack A", "terminal": "Junction", "image_pin": 3, "x": null, "y": null},
+    "4": {"name": "Bridge Stack B Diode Cathode (right leg)", "component": "Bridge Stack B", "terminal": "Diode Cathode", "image_pin": 4, "x": null, "y": null},
+    "5": {"name": "Bridge Stack B Internal Junction Bottom", "component": "Bridge Stack B", "terminal": "Junction", "image_pin": 5, "x": null, "y": null},
+    "6": {"name": "Bridge Stack A Diode Junction (left)", "component": "Bridge Stack A", "terminal": "Diode Junction", "image_pin": 6, "x": null, "y": null},
+    "7": {"name": "Switching Pulse Header Pin A", "component": "Switching Pulse Stage", "terminal": "Pulse A", "image_pin": 7, "x": null, "y": null},
+    "8": {"name": "Bridge Stack A Diode Cathode (right leg)", "component": "Bridge Stack A", "terminal": "Diode Cathode", "image_pin": 8, "x": null, "y": null},
+    "9": {"name": "Bridge Stack B Diode Junction (right)", "component": "Bridge Stack B", "terminal": "Diode Junction", "image_pin": 9, "x": null, "y": null},
+    "10": {"name": "Bridge Stack B Diode Cathode (bottom)", "component": "Bridge Stack B", "terminal": "Diode Cathode", "image_pin": 10, "x": null, "y": null},
+    "11": {"name": "Bridge Stack B Diode Anode (bottom)", "component": "Bridge Stack B", "terminal": "Diode Anode", "image_pin": 11, "x": null, "y": null},
+    "12": {"name": "Bridge Stack B Output Tap", "component": "Bridge Stack B", "terminal": "Output", "image_pin": 12, "x": null, "y": null},
+    "13": {"name": "Bridge Stack A Diode Anode (left)", "component": "Bridge Stack A", "terminal": "Diode Anode", "image_pin": 13, "x": null, "y": null},
+    "14": {"name": "Bridge Stack A Diode Anode (top)", "component": "Bridge Stack A", "terminal": "Diode Anode", "image_pin": 14, "x": null, "y": null},
+    "15": {"name": "Switching Pulse Header Pin B", "component": "Switching Pulse Stage", "terminal": "Pulse B", "image_pin": 15, "x": null, "y": null},
+    "16": {"name": "Switching Pulse Header Pin C", "component": "Switching Pulse Stage", "terminal": "Pulse C", "image_pin": 16, "x": null, "y": null},
+    "17": {"name": "9V Output Terminal", "component": "Output Rails", "terminal": "9V", "image_pin": 17, "x": null, "y": null},
+    "18": {"name": "12V Output Terminal", "component": "Output Rails", "terminal": "12V", "image_pin": 18, "x": null, "y": null},
+    "19": {"name": "GND Output Terminal (redundant block A)", "component": "Output Rails", "terminal": "GND", "image_pin": 19, "x": null, "y": null},
+    "20": {"name": "+12V Output Terminal (redundant block A)", "component": "Output Rails", "terminal": "+12V", "image_pin": 20, "x": null, "y": null},
+    "21": {"name": "+5V Output Terminal (redundant block)", "component": "Output Rails", "terminal": "+5V", "image_pin": 21, "x": null, "y": null},
+    "22": {"name": "GND Output Terminal (redundant block B)", "component": "Output Rails", "terminal": "GND", "image_pin": 22, "x": null, "y": null},
+    "23": {"name": "9V Output Terminal (redundant block A)", "component": "Output Rails", "terminal": "9V", "image_pin": 23, "x": null, "y": null},
+    "24": {"name": "9V Output Terminal (redundant block B)", "component": "Output Rails", "terminal": "9V", "image_pin": 24, "x": null, "y": null},
+    "25": {"name": "12V Output Terminal (redundant block A)", "component": "Output Rails", "terminal": "12V", "image_pin": 25, "x": null, "y": null},
+    "26": {"name": "12V Output Terminal (redundant block B)", "component": "Output Rails", "terminal": "12V", "image_pin": 26, "x": null, "y": null},
+    "27": {"name": "+12V Output Terminal (redundant block B)", "component": "Output Rails", "terminal": "+12V", "image_pin": 27, "x": null, "y": null},
+    "28": {"name": "GND Output Terminal (redundant block C)", "component": "Output Rails", "terminal": "GND", "image_pin": 28, "x": null, "y": null},
+    "29": {"name": "+12V Output Terminal (redundant block C)", "component": "Output Rails", "terminal": "+12V", "image_pin": 29, "x": null, "y": null},
+    "30": {"name": "Bridge Stack A Internal Junction Left", "component": "Bridge Stack A", "terminal": "Junction", "image_pin": 30, "x": null, "y": null},
+    "31": {"name": "Bridge Stack A Internal Junction Right", "component": "Bridge Stack A", "terminal": "Junction", "image_pin": 31, "x": null, "y": null},
+    "32": {"name": "Bridge Stack B Internal Junction Left", "component": "Bridge Stack B", "terminal": "Junction", "image_pin": 32, "x": null, "y": null},
+    "33": {"name": "Bridge Stack B Internal Junction Right", "component": "Bridge Stack B", "terminal": "Junction", "image_pin": 33, "x": null, "y": null}
+  },
+  "component_map": {
+    "Bridge Stack A": {
+      "display_name": "Bridge Stack A (top)",
+      "nodes": ["2", "3", "6", "8", "13", "14", "30", "31"],
+      "associated_groups": ["g1", "g2", "g5"],
+      "description": "First diode bridge stack; rectifies the AC input into pulsating DC feeding the switching stage."
+    },
+    "Bridge Stack B": {
+      "display_name": "Bridge Stack B (bottom)",
+      "nodes": ["1", "4", "5", "9", "10", "11", "12", "32", "33"],
+      "associated_groups": ["g3", "g4", "g6"],
+      "description": "Second diode bridge stack; rectifies the AC input into pulsating DC feeding the switching stage."
+    },
+    "Switching Pulse Stage": {
+      "display_name": "Switching Pulse Stage",
+      "nodes": ["7", "15", "16"],
+      "associated_groups": ["g8"],
+      "description": "Regulates the combined rectified DC into stable output rails using the switching pulse control."
+    },
+    "Output Rails": {
+      "display_name": "Output Rails (9V/12V/+5V/+12V/GND)",
+      "nodes": ["17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29"],
+      "associated_groups": ["g7", "g8"],
+      "description": "Regulated DC output terminals and common ground reference for measurement."
+    }
+  }
+}

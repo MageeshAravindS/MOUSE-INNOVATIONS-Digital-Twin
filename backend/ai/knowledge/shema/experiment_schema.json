@@ -1,0 +1,347 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edunexus.local/schemas/experiment_schema.json",
+  "title": "EduNexus Experiment Knowledge Schema",
+  "description": "Validates a single Electrical Engineering experiment knowledge file (e.g. bridge_rectifier.json, buck_converter.json). One instance of this schema describes exactly one experiment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "experiment_id",
+    "experiment_name",
+    "category",
+    "difficulty",
+    "objective",
+    "theory",
+    "components",
+    "nodes",
+    "expected_connections",
+    "waveform",
+    "calculations",
+    "troubleshooting",
+    "viva_questions",
+    "safety",
+    "expected_observations",
+    "practical_applications"
+  ],
+  "properties": {
+    "experiment_id": {
+      "type": "string",
+      "description": "Stable, unique, filesystem-safe identifier. Must match the JSON file's name without extension.",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "experiment_name": {
+      "type": "string",
+      "description": "Human-readable experiment title, e.g. 'Single Phase Bridge Rectifier'.",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "description": "Broad subject area.",
+      "enum": [
+        "Power Electronics",
+        "Electrical Machines",
+        "Analog Electronics",
+        "Digital Electronics",
+        "Embedded Systems",
+        "Control Systems",
+        "IoT",
+        "Renewable Energy",
+        "Measurements and Instrumentation"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["Beginner", "Intermediate", "Advanced"]
+    },
+    "objective": {
+      "type": "string",
+      "description": "One or two sentences stating what the experiment sets out to demonstrate.",
+      "minLength": 1
+    },
+
+    "theory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["overview", "applications"],
+      "properties": {
+        "overview": {
+          "type": "string",
+          "description": "Explanation of the underlying concept: definition, working principle, and circuit behavior.",
+          "minLength": 1
+        },
+        "applications": {
+          "type": "array",
+          "description": "Real-world / industrial applications of this concept.",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+
+    "components": {
+      "type": "array",
+      "description": "Physical or logical components used in the experiment (diodes, capacitors, resistors, switches, ICs, etc.).",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "label"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Short reference used elsewhere (e.g. in expected_connections.component or troubleshooting entries), e.g. 'D1', 'C1'.",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "type": {
+            "type": "string",
+            "description": "Component category.",
+            "enum": [
+              "diode",
+              "resistor",
+              "capacitor",
+              "inductor",
+              "transformer",
+              "transistor",
+              "mosfet",
+              "ic",
+              "switch",
+              "potentiometer",
+              "sensor",
+              "led",
+              "connector",
+              "other"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable name, e.g. 'Filter Capacitor'.",
+            "minLength": 1
+          },
+          "value": {
+            "type": "string",
+            "description": "Optional rated value, e.g. '1000uF', '10kOhm'."
+          }
+        }
+      }
+    },
+
+    "nodes": {
+      "type": "object",
+      "description": "Map of physical node/socket number (as it appears on the hardware board, e.g. in socket_positions_*.json) to its role and description. Keys are node numbers as strings.",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[0-9]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "description"],
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "Functional role of this node in the circuit.",
+            "enum": [
+              "AC_INPUT",
+              "AC_INPUT_JUNCTION",
+              "DC_POSITIVE_OUT",
+              "DC_NEGATIVE_OUT",
+              "GROUND",
+              "SUPPLY_POSITIVE",
+              "SUPPLY_NEGATIVE",
+              "COMPONENT_TERMINAL",
+              "SWITCHING_SIGNAL",
+              "LOAD_TERMINAL",
+              "FEEDBACK",
+              "OTHER"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Short human-readable explanation of what this node physically is.",
+            "minLength": 1
+          }
+        }
+      }
+    },
+
+    "expected_connections": {
+      "type": "array",
+      "description": "The complete, correct wiring for this experiment. Every entry must use real node numbers from the nodes object (or the corresponding socket_positions file) — never placeholder values.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "from",
+          "to",
+          "component",
+          "purpose",
+          "importance",
+          "effect_if_wrong",
+          "recommendation",
+          "common_mistakes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique connection identifier within this experiment, e.g. 'C1'.",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "from": {
+            "type": "integer",
+            "description": "Real node/socket number where this connection starts. Must not be a placeholder such as 0 unless 0 is a genuine node label on the hardware.",
+            "minimum": 1
+          },
+          "to": {
+            "type": "integer",
+            "description": "Real node/socket number where this connection ends. Must not be a placeholder such as 0 unless 0 is a genuine node label on the hardware.",
+            "minimum": 1
+          },
+          "component": {
+            "type": "string",
+            "description": "Component or terminal this connection relates to, e.g. 'Diode D1' or component id from the components array.",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Why this connection exists in the circuit.",
+            "minLength": 1
+          },
+          "importance": {
+            "type": "string",
+            "enum": ["Essential", "Critical", "Optional"]
+          },
+          "effect_if_wrong": {
+            "type": "string",
+            "description": "Practical consequence if this connection is missing, extra, or reversed.",
+            "minLength": 1
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Corrective guidance the AI teacher should give the student.",
+            "minLength": 1
+          },
+          "common_mistakes": {
+            "type": "array",
+            "description": "Typical wiring errors students make for this connection.",
+            "items": { "type": "string", "minLength": 1 },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "troubleshooting": {
+            "type": "string",
+            "description": "Optional per-connection diagnostic tip (e.g. multimeter check). General experiment-level troubleshooting belongs in the top-level troubleshooting array."
+          }
+        },
+        "if": {
+          "not": {
+            "properties": {
+              "from": { "const": 0 },
+              "to": { "const": 0 }
+            }
+          }
+        },
+        "else": {
+          "description": "from:0,to:0 placeholders are rejected by this schema — real node numbers are required.",
+          "not": {}
+        }
+      }
+    },
+
+    "waveform": {
+      "type": "object",
+      "description": "Expected input/output signal behavior for this experiment.",
+      "additionalProperties": false,
+      "required": ["input", "output"],
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Description of the expected input waveform, e.g. 'sine, 50Hz'.",
+          "minLength": 1
+        },
+        "output": {
+          "type": "string",
+          "description": "Description of the expected output waveform, e.g. 'full-wave pulsating DC'.",
+          "minLength": 1
+        },
+        "ripple_description": {
+          "type": "string",
+          "description": "Optional description of ripple behavior, where applicable."
+        }
+      }
+    },
+
+    "calculations": {
+      "type": "object",
+      "description": "Formulas and reference calculations relevant to this experiment.",
+      "additionalProperties": false,
+      "required": ["formulas"],
+      "properties": {
+        "formulas": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional clarifying notes about when/how to apply the formulas."
+        }
+      }
+    },
+
+    "troubleshooting": {
+      "type": "array",
+      "description": "General, experiment-level fault scenarios not tied to a single connection (e.g. short circuit, reverse polarity).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "message", "instruction"],
+        "properties": {
+          "title": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 },
+          "instruction": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+
+    "viva_questions": {
+      "type": "array",
+      "description": "Reference question/answer bank used by viva mode.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question", "answer"],
+        "properties": {
+          "question": { "type": "string", "minLength": 1 },
+          "answer": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+
+    "safety": {
+      "type": "array",
+      "description": "Safety precautions specific to this experiment.",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+
+    "expected_observations": {
+      "type": "array",
+      "description": "What a correctly-run experiment should produce, in observable terms (e.g. measured voltage ranges).",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+
+    "practical_applications": {
+      "type": "array",
+      "description": "Industry or real-world use cases for this circuit/experiment.",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  }
+}
