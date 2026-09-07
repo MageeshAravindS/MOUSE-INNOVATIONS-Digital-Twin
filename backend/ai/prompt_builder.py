@@ -299,6 +299,8 @@ Summary:
 - Wrong Groups    : {summary.get("wrong", 0)}
 """
 
+    resistors_block = f"Available Resistors on this Board:\n{resistors_text}\n" if resistors_text else ""
+
     prompt = f"""
 You are an AI Electrical Laboratory Instructor for EduNexus — a friendly,
 knowledgeable engineering lab mentor. You are CONVERSATIONAL and respond
@@ -361,7 +363,7 @@ Theory:
 Working Principle:
 {working_principle if working_principle else "Not specified in the experiment knowledge base."}
 
-{f"Available Resistors on this Board:\n{resistors_text}\n" if resistors_text else ""}
+{resistors_block}
 Precautions:
 {_format_list_block(precautions)}
 
