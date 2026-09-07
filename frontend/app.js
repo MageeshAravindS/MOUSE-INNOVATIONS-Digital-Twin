@@ -619,6 +619,15 @@ function renderLogin() {
         Forgot Password?
       </button>
 
+      <!-- Quick Demo Account Fill -->
+      <div style="margin-top:14px;padding:10px 12px;background:rgba(99,102,241,0.08);border:1px dashed rgba(99,102,241,0.3);border-radius:8px;font-size:11px;color:var(--text-sub, #64748b);text-align:center;line-height:1.5">
+        <div style="font-weight:600;color:var(--primary, #4f46e5);margin-bottom:6px">🧪 Demo Accounts</div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:4px">
+          <button type="button" style="cursor:pointer;padding:4px 8px;border-radius:5px;border:1px solid #c7d2fe;background:#e0e7ff;color:#3730a3;font-size:11px;font-weight:500" onclick="document.getElementById('auth-email').value='teacher@edunexus.edu';document.getElementById('auth-password').value='teacher123';">Demo Teacher</button>
+          <button type="button" style="cursor:pointer;padding:4px 8px;border-radius:5px;border:1px solid #e2e8f0;background:#f1f5f9;color:#334155;font-size:11px;font-weight:500" onclick="document.getElementById('auth-email').value='student@edunexus.edu';document.getElementById('auth-password').value='student123';">Demo Student</button>
+        </div>
+      </div>
+
       <div id="login-error" class="login-error"></div>
 
     </div>

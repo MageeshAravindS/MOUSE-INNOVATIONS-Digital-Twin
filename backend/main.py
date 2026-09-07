@@ -31,11 +31,13 @@ from rb_report import generate_resistance_bank_report, ReportNotReady, ReportGen
 from level2_target_gen import generate_target_ohms
 from hardware_relay import shutdown_relay
 from live_classroom import classroom_hub
+from create_dummy_teacher import seed_initial_accounts
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
+    seed_initial_accounts()
     yield
     shutdown_relay()
 
