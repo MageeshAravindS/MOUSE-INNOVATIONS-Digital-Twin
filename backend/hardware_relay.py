@@ -36,13 +36,17 @@ the assessment approve/reject database flow.
 import os
 import threading
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=False)
 
 try:
     import serial  # pyserial
 except ImportError:
     serial = None
 
-RELAY_SERIAL_PORT = os.environ.get("RELAY_SERIAL_PORT", "COM3")
+RELAY_SERIAL_PORT = os.environ.get("RELAY_SERIAL_PORT", "COM8")
 RELAY_SERIAL_BAUD = int(os.environ.get("RELAY_SERIAL_BAUD", "115200"))
 
 # Heartbeat cadence. Must stay comfortably under the Arduino's 3s timeout.
@@ -60,9 +64,38 @@ _state = "LOCKED"
 _heartbeat_thread = None
 _heartbeat_stop_event = threading.Event()
 
+# Diagnostic log buffer for live console (keeps last 50 events)
+_log_buffer: list = []
+_MAX_LOGS = 60
 
-def _log(msg: str) -> None:
+
+def _log(msg: str, level: str = "info") -> None:
     print(f"[Relay] {msg}")
+    with _lock:
+        entry = {
+            "time": time.strftime("%H:%M:%S"),
+            "timestamp": time.time(),
+            "msg": msg,
+            "level": level,
+        }
+        _log_buffer.append(entry)
+        if len(_log_buffer) > _MAX_LOGS:
+            _log_buffer.pop(0)
+
+
+def get_relay_diagnostics() -> dict:
+    """Return complete relay diagnostic status and recent event logs."""
+    with _lock:
+        is_open = _conn is not None and getattr(_conn, "is_open", False)
+        return {
+            "state": _state,
+            "port": RELAY_SERIAL_PORT,
+            "baud": RELAY_SERIAL_BAUD,
+            "port_open": is_open,
+            "pyserial_installed": serial is not None,
+            "heartbeat_active": _heartbeat_thread is not None and _heartbeat_thread.is_alive(),
+            "logs": list(_log_buffer),
+        }
 
 
 def _get_connection():
@@ -78,9 +111,10 @@ def _get_connection():
     try:
         _log(f"Opening {RELAY_SERIAL_PORT}")
         _conn = serial.Serial(RELAY_SERIAL_PORT, RELAY_SERIAL_BAUD, timeout=2)
+        _log(f"Connected to {RELAY_SERIAL_PORT} successfully", level="success")
         return _conn
     except Exception as e:
-        _log(f"Could not open {RELAY_SERIAL_PORT}: {e}")
+        _log(f"Could not open {RELAY_SERIAL_PORT}: {e}", level="error")
         _conn = None
         return None
 
@@ -100,10 +134,10 @@ def _send_command(command: str) -> bool:
             conn.reset_output_buffer()
             conn.write((command + "\n").encode("utf-8"))
             conn.flush()
-            _log(f"Sending {command}")
+            _log(f"Transmitted signal: {command} -> {RELAY_SERIAL_PORT}", level="success" if command in ("UNLOCK", "LOCK") else "info")
             return True
         except Exception as e:
-            _log(f"Failed to send {command}: {e}")
+            _log(f"Failed to transmit {command}: {e}", level="error")
             global _conn
             try:
                 conn.close()

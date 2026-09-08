@@ -1406,9 +1406,57 @@ font-weight:600;
         <div class="pc-info-row"><span>Timer</span><b id="pc-timer">00:00</b></div>
         <div class="pc-info-row"><span>Attempt</span><b id="pc-attempt">In progress</b></div>
         <div class="pc-info-row"><span>Circuit Status</span><b id="pc-status-mini" style="color:#64748b">Not evaluated</b></div>
+        
+        <!-- Live Hardware Relay Status Widget -->
+        <div style="margin-top:14px;padding:10px 12px;background:rgba(15,23,42,0.6);border:1px solid rgba(148,163,184,0.15);border-radius:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:11px;font-weight:700;letter-spacing:0.02em;color:#94a3b8">RELAY POWER SIGNAL</span>
+            <span id="pc-relay-live-badge" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:#334155;color:#94a3b8">CHECKING...</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#cbd5e1">
+            <span>Port: <code id="pc-relay-port-label" style="color:#38bdf8">--</code></span>
+            <button class="btn btn-sm" onclick="pcToggleRelayConsole()" style="padding:2px 8px;font-size:11px;background:#1e293b;border:1px solid #475569;color:#e2e8f0;display:flex;align-items:center;gap:4px">
+              <span>📟</span> Live Console
+            </button>
+          </div>
+        </div>
+
         <div style="margin-top:14px">
           <button class="btn" style="width:100%" onclick="pcExitAssessment()">Exit to Dashboard</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Live Relay Debug Console Modal / Drawer -->
+    <div id="pc-relay-console-modal" style="display:none;position:fixed;bottom:20px;right:20px;width:440px;max-width:92vw;background:#0f172a;border:1px solid #334155;border-radius:12px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.5),0 8px 10px -6px rgba(0,0,0,0.5);z-index:9999;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#1e293b;border-bottom:1px solid #334155">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981" id="pc-console-dot"></span>
+          <span style="font-size:12px;font-weight:700;color:#f8fafc;font-family:system-ui">Hardware Relay Live Console</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button onclick="pcClearConsoleLogs()" title="Clear Console" style="background:transparent;border:none;color:#94a3b8;cursor:pointer;font-size:12px;padding:2px 6px">Clear</button>
+          <button onclick="pcToggleRelayConsole()" style="background:transparent;border:none;color:#94a3b8;cursor:pointer;font-size:16px;line-height:1;padding:0 4px">✕</button>
+        </div>
+      </div>
+      <div style="padding:10px 14px;background:#131d33;font-size:11px;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <div style="color:#94a3b8">
+          Signal State: <b id="pc-console-state" style="color:#f59e0b">LOCKED (POWER OFF)</b>
+        </div>
+        <div style="color:#94a3b8">
+          Port: <b id="pc-console-port" style="color:#38bdf8">COM8</b> (<span id="pc-console-port-status" style="color:#ef4444">Closed</span>)
+        </div>
+      </div>
+      <div id="pc-relay-logs-container" style="height:210px;overflow-y:auto;padding:10px 14px;font-size:11px;line-height:1.6;color:#94a3b8;background:#090d16">
+        <div style="color:#64748b;font-style:italic">Listening for relay events & transmission signals…</div>
+      </div>
+      <div style="padding:8px 12px;background:#1e293b;border-top:1px solid #334155;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-sm" onclick="pcSendTestRelaySignal('UNLOCK')" style="font-size:11px;background:#059669;color:white;border:none;padding:4px 10px;font-family:system-ui;font-weight:600">
+          ⚡ Send UNLOCK (Power ON)
+        </button>
+        <button class="btn btn-sm" onclick="pcSendTestRelaySignal('LOCK')" style="font-size:11px;background:#dc2626;color:white;border:none;padding:4px 10px;font-family:system-ui;font-weight:600">
+          🛑 Send LOCK (Power OFF)
+        </button>
       </div>
     </div>
   `;
@@ -1423,6 +1471,9 @@ pcOnExperimentTypeChange(true); // sync label with dropdown default, no toast/cl
   pcState.timerHandle = setInterval(pcTickTimer, 1000);
   if (!serialSupported) pcUseManualMode();
   
+  // Start polling relay status for live console
+  pcStartRelayPolling();
+
   // ====== AI VISIBILITY CONTROL ======
   updateAIVisibility();
 }
@@ -1434,12 +1485,155 @@ function pcExitAssessment() {
   pcDisconnectHardware();
   if (pcState?.timerHandle)      clearInterval(pcState.timerHandle);
   if (pcState?.adminPollHandle)  clearInterval(pcState.adminPollHandle);
+  pcStopRelayPolling();
 window.assessmentRunning = false;  
 renderAssessmentDashboard();
   
   // ====== AI VISIBILITY CONTROL ======
   updateAIVisibility();
 }
+
+// ============================================================================
+// Live Hardware Relay Console & Signal Debugger
+// ============================================================================
+let _pcRelayPollInterval = null;
+let _pcLastLogTimestamp = 0;
+
+function pcToggleRelayConsole() {
+  const modal = document.getElementById('pc-relay-console-modal');
+  if (!modal) return;
+  const isHidden = modal.style.display === 'none' || !modal.style.display;
+  modal.style.display = isHidden ? 'block' : 'none';
+  if (isHidden) {
+    pcFetchRelayStatus();
+  }
+}
+window.pcToggleRelayConsole = pcToggleRelayConsole;
+
+function pcClearConsoleLogs() {
+  const container = document.getElementById('pc-relay-logs-container');
+  if (container) {
+    container.innerHTML = '<div style="color:#64748b;font-style:italic">Console cleared. Awaiting new signals…</div>';
+  }
+}
+window.pcClearConsoleLogs = pcClearConsoleLogs;
+
+function pcStartRelayPolling() {
+  pcStopRelayPolling();
+  pcFetchRelayStatus();
+  _pcRelayPollInterval = setInterval(pcFetchRelayStatus, 2000);
+}
+
+function pcStopRelayPolling() {
+  if (_pcRelayPollInterval) {
+    clearInterval(_pcRelayPollInterval);
+    _pcRelayPollInterval = null;
+  }
+}
+
+async function pcFetchRelayStatus() {
+  try {
+    const data = await api('/relay/status');
+    if (!data) return;
+    
+    // Update live badge on assessment info panel
+    const badge = document.getElementById('pc-relay-live-badge');
+    const portLabel = document.getElementById('pc-relay-port-label');
+    if (portLabel) portLabel.textContent = data.port || 'None';
+
+    const isUnlocked = data.state === 'UNLOCKED';
+    if (badge) {
+      if (isUnlocked) {
+        badge.textContent = '⚡ ENERGIZED (ON)';
+        badge.style.background = '#059669';
+        badge.style.color = '#ffffff';
+      } else {
+        badge.textContent = '🔒 LOCKED (OFF)';
+        badge.style.background = '#475569';
+        badge.style.color = '#cbd5e1';
+      }
+    }
+
+    // Update console modal fields if open
+    const modal = document.getElementById('pc-relay-console-modal');
+    if (modal && modal.style.display !== 'none') {
+      const stateEl = document.getElementById('pc-console-state');
+      const portEl = document.getElementById('pc-console-port');
+      const statusEl = document.getElementById('pc-console-port-status');
+      const dotEl = document.getElementById('pc-console-dot');
+
+      if (stateEl) {
+        stateEl.textContent = isUnlocked ? '⚡ UNLOCKED (POWER SIGNAL ACTIVE)' : '🔒 LOCKED (POWER OFF)';
+        stateEl.style.color = isUnlocked ? '#34d399' : '#f59e0b';
+      }
+      if (portEl) portEl.textContent = `${data.port} @ ${data.baud} baud`;
+      if (statusEl) {
+        statusEl.textContent = data.port_open ? 'Connected' : 'Closed / Waiting';
+        statusEl.style.color = data.port_open ? '#34d399' : '#f87171';
+      }
+      if (dotEl) {
+        dotEl.style.background = isUnlocked ? '#10b981' : data.port_open ? '#38bdf8' : '#eab308';
+      }
+
+      // Render logs
+      const container = document.getElementById('pc-relay-logs-container');
+      if (container && Array.isArray(data.logs)) {
+        if (data.logs.length === 0) {
+          container.innerHTML = '<div style="color:#64748b;font-style:italic">No relay events recorded yet. Connect board or approve assessment to trigger.</div>';
+        } else {
+          container.innerHTML = data.logs.map(log => {
+            let color = '#94a3b8';
+            let icon = '•';
+            if (log.level === 'error') {
+              color = '#f87171';
+              icon = '✖';
+            } else if (log.level === 'success') {
+              color = '#34d399';
+              icon = '✔';
+            } else if (log.msg && log.msg.includes('HEARTBEAT')) {
+              color = '#64748b';
+              icon = '♡';
+            }
+            return `<div style="color:${color};margin-bottom:2px"><span style="color:#475569">[${log.time}]</span> <span style="font-weight:700">${icon}</span> ${escapeHtml(log.msg)}</div>`;
+          }).join('');
+          container.scrollTop = container.scrollHeight;
+        }
+      }
+    }
+  } catch (e) {
+    const badge = document.getElementById('pc-relay-live-badge');
+    if (badge) {
+      badge.textContent = 'OFFLINE';
+      badge.style.background = '#dc2626';
+      badge.style.color = '#ffffff';
+    }
+  }
+}
+window.pcFetchRelayStatus = pcFetchRelayStatus;
+
+async function pcSendTestRelaySignal(action) {
+  try {
+    toast(`Transmitting ${action} command to hardware…`);
+    const aid = pcState?.pendingResult?.id || null;
+    const res = await api('/relay/test', {
+      method: 'POST',
+      body: { 
+        action: action,
+        assessment_id: aid
+      }
+    });
+    if (res && res.success) {
+      toast(`Successfully sent ${action} to relay!`);
+    } else {
+      toast(`Signal ${action} sent (Check live console for port status)`);
+    }
+    pcFetchRelayStatus();
+  } catch (e) {
+    toast(`Failed to send test signal: ${e.message}`);
+    pcFetchRelayStatus();
+  }
+}
+window.pcSendTestRelaySignal = pcSendTestRelaySignal;
 
 function pcUseManualMode() {
   if (!pcState) return;

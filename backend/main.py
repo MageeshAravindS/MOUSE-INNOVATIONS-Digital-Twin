@@ -29,7 +29,7 @@ from ai.experiment_loader import load_experiment, ExperimentNotFoundError, Exper
 from ai.circuit_analyzer import analyze_connections
 from rb_report import generate_resistance_bank_report, ReportNotReady, ReportGenerationFailed, REPORTS_DIR
 from level2_target_gen import generate_target_ohms
-from hardware_relay import shutdown_relay
+from hardware_relay import shutdown_relay, unlock_hardware, lock_hardware, release_port, get_relay_diagnostics
 from live_classroom import classroom_hub
 from create_dummy_teacher import seed_initial_accounts
 from contextlib import asynccontextmanager
@@ -45,7 +45,13 @@ app = FastAPI(title="EduNexus API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://127.0.0.1:8123",
+        "http://localhost:8123",
+        "*"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -644,10 +650,13 @@ def review_assessment(assessment_id: int, req: AssessmentReviewRequest,
 
     # Faculty Controlled Hardware Unlock — best-effort, never affects the
     # already-committed approval/rejection above.
-    if req.action == "approved":
-        unlock_hardware()
-    else:
-        lock_hardware()
+    try:
+        if req.action == "approved":
+            unlock_hardware()
+        else:
+            lock_hardware()
+    except Exception as exc:
+        print(f"[Relay] Non-fatal exception during {req.action}: {exc}")
 
     return {"status": req.action, "reviewer": current_user.name or current_user.email,
             "timestamp": now.isoformat()}
@@ -1217,14 +1226,64 @@ def relay_release(current_user: User = Depends(get_current_user)):
     resistance-bank scanning. Call this right before reconnecting Web
     Serial for a new experiment attempt — otherwise the browser may hit
     an "Access is denied" error if the backend still has the port open
-    from a previous approval/rejection cycle.
-
-    Safe to call at any time: if the relay happens to be UNLOCKED when
-    this is called, it is locked first before the port is released, so
-    the port is never given up while still energized. Best-effort; does
-    not affect any assessment/database state."""
+    from a previous approval/rejection cycle."""
     ok = release_port()
     return {"released": ok}
+
+
+@app.get("/relay/status")
+def relay_status_endpoint():
+    """Live diagnostic stream for the hardware relay console.
+    Reports connection health, active COM port, relay state, and recent transmission logs."""
+    from hardware_relay import get_relay_diagnostics
+    return get_relay_diagnostics()
+
+
+class RelayTestRequest(BaseModel):
+    action: str  # "UNLOCK", "LOCK", "HEARTBEAT"
+    assessment_id: Optional[int] = None
+
+
+@app.post("/relay/test")
+def relay_test_endpoint(
+    req: RelayTestRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Trigger sending UNLOCK or LOCK signal.
+    Allowed if:
+    1. The user is a staff member.
+    OR
+    2. The user is a student whose assessment submission has already been approved by staff."""
+    action = req.action.upper().strip()
+    if action not in ("UNLOCK", "LOCK"):
+        raise HTTPException(status_code=400, detail="Invalid action. Use UNLOCK or LOCK.")
+
+    # Authorization: allow staff unconditionally
+    is_staff = current_user.role == "staff"
+    if not is_staff:
+        # Check if the student has an approved assessment
+        query = db.query(AssessmentResult).filter(
+            AssessmentResult.user_id == current_user.id,
+            AssessmentResult.faculty_approved == "approved"
+        )
+        if req.assessment_id:
+            query = query.filter(AssessmentResult.id == req.assessment_id)
+        has_approved = query.first() is not None
+        if not has_approved:
+            raise HTTPException(
+                status_code=403,
+                detail="Relay control is locked until faculty approves your assessment."
+            )
+
+    if action == "UNLOCK":
+        ok = unlock_hardware()
+    else:
+        ok = lock_hardware()
+
+    from hardware_relay import get_relay_diagnostics
+    diag = get_relay_diagnostics()
+    return {"success": ok, "action": action, "diagnostics": diag}
 
 
 # ---------- Resistance Bank: Reset + Final Report ----------
